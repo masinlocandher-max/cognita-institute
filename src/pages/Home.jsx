@@ -1,30 +1,49 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Check } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  ChevronRight,
+  FileCheck2,
+  Layers3,
+  ShieldCheck,
+  UsersRound,
+} from "lucide-react";
 import BrandLockup from "@/components/BrandLockup";
-import CinematicBackground from "@/components/CinematicBackground";
 import CognitaIntroTransition from "@/components/CognitaIntroTransition";
 import FounderPreview from "@/components/FounderPreview";
+import ProgramPortfolio from "@/components/ProgramPortfolio";
+import ProgramIcon from "@/components/ProgramIcon";
+import { FLAGSHIP_PROGRAM } from "@/lib/program-portfolio";
 
 const STATS = [
-  { value: "10", label: "Week Program" },
-  { value: "2", label: "Active Tracks" },
-  { value: "100%", label: "Output-Based" },
-  { value: "0", label: "Auto-Certificates" },
+  { value: "4", label: "Professional learning pathways" },
+  { value: "10", label: "Weeks in the flagship program" },
+  { value: "Human", label: "Review for guided submissions" },
+  { value: "Verified", label: "Completion before credentialing" },
 ];
 
-const FEATURES = [
-  "One-on-One AI Coaching",
-  "Practical AI Modules",
-  "Output-Based Learning",
-  "Verified Certificate",
-];
-
-const PILLARS = [
-  { title: "Selective Admissions", desc: "Every student is screened and accepted based on commitment, goals, and readiness — not just payment." },
-  { title: "Structured Curriculum", desc: "10 weeks of progressive learning with weekly required outputs. No skipping. No shortcuts." },
-  { title: "Facilitator Review", desc: "Every submission is reviewed by a human facilitator who provides feedback, revisions, and pass decisions." },
-  { title: "Verified Certification", desc: "Certificates are issued only after all outputs are completed and passed. Never automatic." },
+const STANDARDS = [
+  {
+    icon: Layers3,
+    title: "Structured learning",
+    description: "Every pathway has a defined purpose, audience, delivery model, and completion standard.",
+  },
+  {
+    icon: UsersRound,
+    title: "Human-guided when promised",
+    description: "Facilitator support is clearly separated from self-paced access so learners know what they are purchasing.",
+  },
+  {
+    icon: FileCheck2,
+    title: "Evidence before credentials",
+    description: "Certificates and verified records depend on reviewed work and published completion requirements.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Honest institutional positioning",
+    description: "Cognita is presented as a private professional training institute offering non-degree programs.",
+  },
 ];
 
 export default function Home() {
@@ -43,163 +62,188 @@ export default function Home() {
   }
 
   return (
-    <div>
-      {/* Hero */}
-      <CinematicBackground className="min-h-[92vh] flex items-center justify-center px-5 sm:px-6 pt-16 pb-12">
-        <div className="max-w-3xl mx-auto text-center">
-          <BrandLockup size="lg" className="mb-12" />
+    <div className="apple-surface">
+      <section className="relative overflow-hidden px-5 pb-20 pt-24 sm:px-6 md:pb-28 md:pt-32">
+        <div className="absolute left-1/2 top-0 h-[34rem] w-[58rem] -translate-x-1/2 rounded-full bg-sky-400/[0.07] blur-[130px]" />
+        <div className="relative mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
+          <div>
+            <BrandLockup size="md" className="mb-10 items-start" />
+            <p className="apple-eyebrow">Private professional AI training institute</p>
+            <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] text-white sm:text-5xl md:text-7xl">
+              Professional AI learning.
+              <span className="block text-sky-300">Designed around proof.</span>
+            </h1>
+            <p className="mt-7 max-w-2xl text-base leading-7 text-slate-300/75 md:text-xl md:leading-8">
+              Cognita combines flexible learning, guided professional programs, evidence-based assessment, and institutional training within one credible education system.
+            </p>
 
-          <h1 className="text-3xl sm:text-4xl md:text-6xl font-heading font-bold tracking-tight leading-[1.1] mb-4 text-white">
-            LEARN AI
-            <br />
-            <span className="text-cyan-400">THE RIGHT WAY</span>
-          </h1>
-          <p className="text-sm md:text-lg text-white/60 max-w-xl mx-auto mb-8">
-            Not just theory. Real-world application.
-          </p>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <Link
+                to="/program"
+                className="apple-button-primary gap-2 px-7 py-3.5 text-sm font-semibold"
+              >
+                Explore Cognita programs
+                <ArrowRight size={16} />
+              </Link>
+              <Link
+                to="/apply"
+                className="apple-button-secondary gap-2 px-7 py-3.5 text-sm font-medium"
+              >
+                Apply to the 10-week program
+                <ChevronRight size={16} />
+              </Link>
+            </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 mb-8 max-w-md mx-auto">
-            {FEATURES.map((f, i) => (
-              <div key={i} className="flex items-center gap-1.5 text-xs text-white/70">
-                <Check size={12} className="text-cyan-400 flex-shrink-0" />
-                {f}
-              </div>
-            ))}
+            <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-xs text-slate-400">
+              {["Non-degree professional training", "Output-based learning", "Verified completion"].map((item) => (
+                <span key={item} className="flex items-center gap-2">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-sky-400/10 text-sky-300">
+                    <Check size={11} />
+                  </span>
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
 
-          <p className="text-sm md:text-base text-white/50 italic mb-8">
-            Stop guessing. Start using AI with confidence.
-          </p>
+          <div className="apple-hero-visual" aria-label="Cognita learning system overview">
+            <div className="absolute inset-x-8 top-8 flex items-center justify-between text-[11px] uppercase tracking-[0.18em] text-slate-400">
+              <span>Cognita learning environment</span>
+              <span className="rounded-full border border-emerald-300/15 bg-emerald-300/[0.07] px-3 py-1 text-emerald-200/80">System active</span>
+            </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
-            <Link
-              to="/apply"
-              className="btn-glow inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-lg w-full sm:w-auto justify-center"
-            >
-              APPLY FOR THE NEXT BATCH
-              <ArrowRight size={16} />
-            </Link>
-            <Link
-              to="/program"
-              className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-medium rounded-lg border border-white/20 text-white/80 hover:bg-white/5 hover:border-white/40 transition-all w-full sm:w-auto justify-center"
-            >
-              VIEW 10-WEEK PROGRAM
-            </Link>
-          </div>
-
-          <p className="text-xs text-cyan-400/60 font-medium">
-            Attendance does not earn certification. Outputs do.
-          </p>
-        </div>
-      </CinematicBackground>
-
-      {/* Stats */}
-      <section className="border-y border-border/50 bg-secondary/30">
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-10 md:py-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {STATS.map((s, i) => (
-              <div key={i} className="text-center">
-                <div className="text-3xl md:text-4xl font-heading font-bold text-cyan-400">{s.value}</div>
-                <div className="text-sm text-muted-foreground mt-1">{s.label}</div>
+            <div className="apple-device-panel left-7 right-7 top-20 p-5 md:left-10 md:right-10 md:p-6">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-sky-300/70">Flagship pathway</p>
+                  <h2 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-white md:text-2xl">{FLAGSHIP_PROGRAM.name}</h2>
+                  <p className="mt-2 text-sm text-slate-400">Under {FLAGSHIP_PROGRAM.parent}</p>
+                </div>
+                <div className="apple-icon-tile flex-shrink-0">
+                  <ProgramIcon name="professional-programs" size={26} />
+                </div>
               </div>
-            ))}
+              <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/[0.06]">
+                <div className="h-full w-[68%] rounded-full bg-gradient-to-r from-sky-400 to-cyan-200" />
+              </div>
+              <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
+                <span>Foundation</span>
+                <span>Specialization</span>
+                <span>Capstone</span>
+              </div>
+            </div>
+
+            <div className="apple-device-panel bottom-8 left-7 w-[58%] p-5 md:left-10">
+              <p className="text-[10px] uppercase tracking-[0.16em] text-slate-500">Credential standard</p>
+              <p className="mt-2 text-sm font-medium text-white">Review before issuance</p>
+              <div className="mt-4 flex items-center gap-2 text-xs text-emerald-200/80">
+                <ShieldCheck size={14} />
+                Evidence-based completion
+              </div>
+            </div>
+
+            <div className="apple-device-panel bottom-8 right-7 w-[31%] p-5 text-center md:right-10">
+              <p className="text-3xl font-semibold tracking-[-0.05em] text-sky-300">4</p>
+              <p className="mt-1 text-[10px] uppercase tracking-[0.15em] text-slate-500">Program pathways</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Principles */}
-      <section className="max-w-7xl mx-auto px-5 sm:px-6 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            "Most AI academies sell certificates. Cognita builds competence.",
-            "Attendance does not earn certification. Outputs do.",
-            "Your portfolio is your proof.",
-            "Every certificate must mean something.",
-          ].map((line, i) => (
-            <div key={i} className="card-glow flex items-start gap-3 p-5 rounded-xl">
-              <div className="w-1 self-stretch bg-cyan-500/40 rounded-full flex-shrink-0" />
-              <p className="text-base md:text-lg font-heading font-medium text-foreground/90 leading-relaxed">{line}</p>
+      <section className="border-y border-white/[0.065] bg-white/[0.015]">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px px-5 py-10 sm:px-6 md:grid-cols-4 md:py-14">
+          {STATS.map((stat) => (
+            <div key={stat.label} className="px-3 py-4 text-center md:px-6">
+              <p className="text-2xl font-semibold tracking-[-0.04em] text-white md:text-3xl">{stat.value}</p>
+              <p className="mt-2 text-xs leading-5 text-slate-500 md:text-sm">{stat.label}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* The Cognita Standard */}
-      <section className="max-w-7xl mx-auto px-5 sm:px-6 py-12 md:py-20">
-        <div className="max-w-2xl mx-auto text-center mb-10 md:mb-16">
-          <h2 className="section-title text-2xl md:text-4xl font-heading font-bold mb-4">
-            THE COGNITA STANDARD
+      <section className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
+        <div className="mx-auto mb-12 max-w-3xl text-center md:mb-16">
+          <p className="apple-eyebrow">One institute, four pathways</p>
+          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-white md:text-5xl">
+            Choose the level of structure and support you actually need.
           </h2>
-          <p className="text-muted-foreground leading-relaxed">
-            Not a course marketplace. A standards-based academy. Every student goes through a structured process — application, acceptance, training, review, and verified certification.
+          <p className="mt-5 text-base leading-7 text-slate-400 md:text-lg">
+            The divisions are intentionally separated so self-paced access, guided training, assessment, and organizational delivery are never confused with one another.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-          {PILLARS.map((p, i) => (
-            <div key={i} className="card-glow p-6 rounded-xl">
-              <div className="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-4">
-                <Check size={20} className="text-cyan-400" />
-              </div>
-              <h3 className="text-lg font-heading font-semibold mb-2">{p.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
-            </div>
-          ))}
-        </div>
+        <ProgramPortfolio />
       </section>
 
-      {/* How it works */}
-      <section className="border-t border-border/50 bg-secondary/20">
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-12 md:py-20">
-          <h2 className="section-title text-2xl md:text-4xl font-heading font-bold text-center mb-10 md:mb-16">
-            THE ACADEMY FLOW
-          </h2>
-          <div className="max-w-3xl mx-auto space-y-0">
+      <section className="mx-auto max-w-7xl px-5 pb-20 sm:px-6 md:pb-28">
+        <div className="apple-card grid gap-10 p-7 md:p-10 lg:grid-cols-[0.9fr_1.1fr] lg:p-14">
+          <div>
+            <p className="apple-eyebrow">Flagship guided offering</p>
+            <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-white md:text-5xl">
+              {FLAGSHIP_PROGRAM.name}
+            </h2>
+            <p className="mt-5 text-base leading-7 text-slate-300/75">
+              {FLAGSHIP_PROGRAM.description}
+            </p>
+            <Link to="/program#flagship-program" className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-sky-300">
+              View the complete curriculum
+              <ArrowRight size={15} />
+            </Link>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
             {[
-              "You apply with your background and goals",
-              "Admissions team reviews your application",
-              "Accepted applicants confirm enrollment",
-              "You're assigned to a batch and specialization track",
-              "10 weeks of structured learning with weekly outputs",
-              "Facilitators review every submission",
-              "Build your portfolio with passed outputs",
-              "Complete your capstone in Week 10",
-              "Admin issues your verified certificate",
-            ].map((step, i) => (
-              <div key={i} className="flex items-start gap-4 py-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
-                  <span className="text-xs font-mono font-semibold text-cyan-400">{String(i + 1).padStart(2, "0")}</span>
-                </div>
-                <div className="pt-1">
-                  <p className="text-sm md:text-base text-foreground/90">{step}</p>
-                </div>
+              ["Weeks 1–4", "AI Foundation", "Core concepts, responsible use, prompting, research, and workflow fundamentals."],
+              ["Weeks 5–9", "Specialization", "Track-specific practical work with progressive outputs and facilitator review."],
+              ["Week 10", "Capstone", "A final applied project that demonstrates the learner's ability to use AI professionally."],
+              ["Completion", "Credential review", "Portfolio evidence and program requirements are checked before a Certificate of Completion is issued."],
+            ].map(([period, title, description]) => (
+              <div key={title} className="rounded-2xl border border-white/[0.075] bg-white/[0.025] p-5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-sky-300/70">{period}</p>
+                <h3 className="mt-2 text-base font-semibold text-white">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-400">{description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Founder preview */}
+      <section className="border-y border-white/[0.065] bg-white/[0.012]">
+        <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
+          <div className="mb-12 max-w-3xl">
+            <p className="apple-eyebrow">The Cognita standard</p>
+            <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-white md:text-5xl">
+              Credibility comes from clear promises and consistent operations.
+            </h2>
+          </div>
+          <div className="grid gap-5 md:grid-cols-2">
+            {STANDARDS.map(({ icon: Icon, title, description }) => (
+              <div key={title} className="apple-card p-6 md:p-8">
+                <div className="apple-icon-tile">
+                  <Icon size={25} className="text-sky-300" />
+                </div>
+                <h3 className="mt-6 text-xl font-semibold tracking-[-0.025em] text-white">{title}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-400">{description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <FounderPreview />
 
-      {/* CTA */}
-      <section className="max-w-7xl mx-auto px-5 sm:px-6 py-16 md:py-28">
-        <div className="relative rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/5 to-transparent p-8 md:p-16 text-center overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px]" />
-          <div className="relative">
-            <h2 className="text-2xl md:text-4xl font-heading font-bold mb-4">
-              Ready to earn your place?
-            </h2>
-            <p className="text-muted-foreground max-w-lg mx-auto mb-8">
-              AI skill must be demonstrated, not claimed. If you're serious about building real AI competence, we want to hear from you.
-            </p>
-            <Link
-              to="/apply"
-              className="btn-glow inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-lg"
-            >
-              APPLY FOR THE NEXT BATCH
-              <ArrowRight size={16} />
-            </Link>
-          </div>
+      <section className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
+        <div className="apple-card p-8 text-center md:p-16">
+          <p className="apple-eyebrow">Cognita Professional Programs</p>
+          <h2 className="mx-auto mt-4 max-w-3xl text-3xl font-semibold tracking-[-0.045em] text-white md:text-5xl">
+            Ready for guided, standards-based AI training?
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400">
+            Applications to the 10-Week Professional AI Program are reviewed individually before enrollment.
+          </p>
+          <Link to="/apply" className="apple-button-primary mt-8 gap-2 px-7 py-3.5 text-sm font-semibold">
+            Apply to the next cohort
+            <ArrowRight size={16} />
+          </Link>
         </div>
       </section>
     </div>
