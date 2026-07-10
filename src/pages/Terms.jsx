@@ -1,111 +1,107 @@
 import React from "react";
 import { FileText } from "lucide-react";
+import { OFFICIAL_CREDENTIAL_TITLE, OFFICIAL_EMAILS, POLICY_VERSIONS } from "@/lib/governance";
+
+const sections = [
+  {
+    title: "Acceptance and Scope",
+    body: "These Terms of Use apply to the Cognita Institute of Artificial Intelligence website, applications, learning environment, professional programs, Open Learning services, portfolio assessment, institutional training, support systems, and credential registry. By creating an account, applying, enrolling, submitting work, or using a Cognita service, you agree to the version presented to you at that time.",
+  },
+  {
+    title: "Institutional Positioning",
+    body: "Cognita is a private provider of non-degree professional AI training. Unless Cognita expressly states otherwise and has lawful authority to do so, its programs do not award a college degree, diploma, academic credit, professional license, or government accreditation. Marketing language must not be interpreted as such a claim.",
+  },
+  {
+    title: "Applications and Admission",
+    body: "Submitting an application does not guarantee acceptance. Cognita may consider readiness, goals, available study time, program fit, cohort capacity, and the applicant's ability to complete required work. Application decisions must be handled through authorized admissions personnel and may be subject to a documented review or appeal process when applicable.",
+  },
+  {
+    title: "Enrollment and Learning Access",
+    body: "Acceptance is not the same as enrollment. Access may require account verification, a signed enrollment agreement, payment confirmation or an approved waiver, batch or product assignment, and creation of an active access entitlement. Cognita may suspend or revoke access for unresolved payment, serious policy violations, security concerns, misuse, or the end of an agreed access period, subject to applicable written policy and review.",
+  },
+  {
+    title: "Fees, Payment, Withdrawal, and Refunds",
+    body: "The applicable price, discount, payment schedule, due date, withdrawal rule, and refund terms must be shown in the learner's written invoice, enrollment offer, or product terms before payment. A payment is not treated as confirmed until verified by an authorized finance process. Refunds are not automatic and will follow the written policy applicable to the specific transaction. Cognita must not rely on an unwritten case-by-case promise where a clear consumer policy is required.",
+  },
+  {
+    title: "Learning Requirements",
+    body: "Learners are responsible for completing required lessons, activities, quizzes, outputs, revisions, portfolio evidence, disclosures, and reflections. Automated progress indicators and self-check quizzes are learning aids. They are not by themselves proof that the Cognita Standard has been met.",
+  },
+  {
+    title: "Human Review and the Cognita Standard",
+    body: "Only an authorized human reviewer may require revisions, pass or fail reviewed evidence, confirm that a portfolio meets the Cognita Standard, approve a learner for credential issuance, or revoke a credential. AI and automation may assist with routing, completeness checks, reminders, formatting, record preparation, and quality support, but they must not make the final academic or credentialing decision.",
+  },
+  {
+    title: OFFICIAL_CREDENTIAL_TITLE,
+    body: `The ${OFFICIAL_CREDENTIAL_TITLE} is not automatic and is not awarded for attendance alone. Eligibility requires the applicable learning work, required revisions, portfolio evidence, a completed human portfolio audit, confirmation that the Cognita Standard has been met, and a separate authorized credential approval. The credential remains a non-degree professional training record.`,
+  },
+  {
+    title: "Submissions, Versions, and Audit Records",
+    body: "When a learner submits or resubmits assessed work, Cognita may preserve an immutable version for review, quality assurance, appeals, integrity checks, and credentialing. A submitted version may be locked while review is pending. Feedback and later revisions do not erase the earlier audit record, subject to applicable retention and privacy rules.",
+  },
+  {
+    title: "Academic Integrity and Responsible AI Use",
+    body: "Learners must submit work that reflects their own understanding, decisions, and responsibility. Material AI assistance must be disclosed when required. Learners must verify facts, sources, permissions, privacy, and professional suitability. Plagiarism, fabricated evidence, impersonation, falsified sources, credential fraud, malicious content, or undisclosed outsourcing may lead to revision, failure, suspension, removal, or credential review.",
+  },
+  {
+    title: "Learner Intellectual Property",
+    body: "Learners retain ownership of their original submissions, except for third-party content or where a separate written agreement states otherwise. By submitting work, the learner grants Cognita a limited permission to receive, store, reproduce, display privately, assess, annotate, moderate, back up, audit, and retain the work as needed for program delivery, support, quality assurance, records, and credential verification. Public or promotional use of identifiable learner work requires a separate lawful basis or permission.",
+  },
+  {
+    title: "Cognita Materials",
+    body: "Cognita curricula, manuals, source packs, templates, rubrics, frameworks, brand assets, interfaces, and original instructional materials may be used only for the learner's authorized program or service. Users may not resell, republish, upload to public repositories, distribute substantial copies, create a competing course from the materials, remove ownership notices, or use the materials to train others without written permission. Third-party sources remain subject to their own rights and licenses.",
+  },
+  {
+    title: "Privacy, Files, and Security",
+    body: "Use of Cognita services is also governed by the Privacy Policy. Users must protect passwords and one-time codes, provide accurate information, avoid uploading unnecessary sensitive data, and report suspected unauthorized access. Learner files are intended to remain private unless separately published with authorization.",
+  },
+  {
+    title: "Support, Complaints, Appeals, and Corrections",
+    body: "Users should submit concerns through the traceable support system and retain the ticket reference. Academic decisions, payment disputes, privacy requests, credential corrections, and appeals may require different review procedures and identity verification. A support acknowledgment is not a promise that the requested outcome will be granted.",
+  },
+  {
+    title: "Service Availability and Changes",
+    body: "Cognita may maintain, update, suspend, discontinue, or phase features and programs. Material changes affecting enrolled learners should be communicated reasonably and must not be used to misrepresent what was purchased or agreed. Open Learning, professional programs, assessment, and institutional services may have separate availability and terms.",
+  },
+  {
+    title: "Limitation and Professional Responsibility",
+    body: "AI tools and learning materials can be inaccurate, incomplete, biased, unavailable, or unsuitable for a particular use. Learners remain responsible for verifying outputs and obtaining qualified legal, medical, financial, technical, or other professional advice when needed. Cognita training does not guarantee employment, income, business results, platform availability, or acceptance by a third party.",
+  },
+  {
+    title: "Policy Versioning",
+    body: "Cognita records the version of key terms and agreements accepted by users. Material changes may require renewed acceptance. The final governing-law, legal-entity, business-address, consumer-protection, and dispute-resolution clauses must be approved before public paid enrollment opens.",
+  },
+];
 
 export default function Terms() {
   return (
-    <div className="max-w-3xl mx-auto px-6 pt-24 pb-20">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center">
-          <FileText size={20} className="text-cyan-400" />
-        </div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-cyan-400">Legal</p>
+    <div className="mx-auto max-w-3xl px-6 pb-20 pt-24">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-cyan-500/10"><FileText size={20} className="text-cyan-400" /></div>
+        <p className="text-xs font-semibold uppercase tracking-widest text-cyan-400">Legal and Governance</p>
       </div>
-      <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">Terms of Use</h1>
-      <p className="text-sm text-muted-foreground mb-10">Last updated: July 2026</p>
+      <h1 className="mb-2 text-3xl font-bold md:text-4xl">Terms of Use</h1>
+      <p className="mb-10 text-sm text-muted-foreground">Policy version {POLICY_VERSIONS.terms} · Updated July 2026</p>
 
       <div className="space-y-8 text-sm leading-relaxed text-foreground/80">
-        <section>
-          <h2 className="text-lg font-heading font-semibold text-foreground mb-3">Acceptance of Terms</h2>
-          <p>By applying to, enrolling in, or using any service provided by Cognita Institute of Artificial Intelligence ("Cognita", "we", "our", "us"), you agree to be bound by these Terms of Use. If you do not agree to these terms, please do not use the app or apply to the program.</p>
+        <section className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-5">
+          <h2 className="mb-2 font-semibold text-amber-300">Pre-launch legal notice</h2>
+          <p>These are complete operational terms for product and workflow development, but Cognita must add its final legal operator name, business address, governing law, approved refund policy, and qualified Philippine legal review before accepting public paid enrollment.</p>
         </section>
 
-        <section>
-          <h2 className="text-lg font-heading font-semibold text-foreground mb-3">Selective Academy</h2>
-          <p>Cognita is a selective AI academy. Submitting an application does not guarantee acceptance. All applications are reviewed individually by our admissions team. Decisions regarding acceptance, waitlisting, or rejection are final and at the sole discretion of Cognita.</p>
-        </section>
+        {sections.map((section) => (
+          <section key={section.title}>
+            <h2 className="mb-3 text-lg font-semibold text-foreground">{section.title}</h2>
+            <p>{section.body}</p>
+          </section>
+        ))}
 
         <section>
-          <h2 className="text-lg font-heading font-semibold text-foreground mb-3">Enrollment</h2>
-          <p>Enrollment is subject to application review and approval. Only accepted applicants who complete the enrollment process — including batch and track assignment — gain access to the learning dashboard. Enrollment is not automatic upon acceptance.</p>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-heading font-semibold text-foreground mb-3">Certificates Are Not Automatic</h2>
-          <p>Certificates at Cognita are never issued automatically. A Certificate of Practical AI Competency is issued only after all of the following conditions are met:</p>
-          <ul className="space-y-2 ml-1 mt-3">
-            {[
-              "All 10 required weekly outputs are submitted",
-              "All 10 required weekly outputs are reviewed and passed by a facilitator",
-              "The capstone (Week 10) is passed",
-              "The portfolio is complete",
-              "An admin approves the final certification review",
-            ].map((item, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="text-cyan-400 mt-1 flex-shrink-0">·</span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-heading font-semibold text-foreground mb-3">Student Responsibilities</h2>
-          <p className="mb-3">As a student, you are responsible for:</p>
-          <ul className="space-y-2 ml-1">
-            {[
-              "Completing and submitting all required weekly outputs",
-              "Engaging with facilitator feedback and making requested revisions",
-              "Using AI tools ethically and responsibly",
-              "Submitting original work that reflects your own understanding and effort",
-              "Not submitting plagiarized, fake, or harmful content",
-            ].map((item, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="text-cyan-400 mt-1 flex-shrink-0">·</span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-heading font-semibold text-foreground mb-3">Revisions and Review</h2>
-          <p>Cognita facilitators may request revisions to any submitted output. Students are expected to address feedback and resubmit in a timely manner. Facilitator decisions on pass, revision, or fail are based on demonstrated competence, not effort alone.</p>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-heading font-semibold text-foreground mb-3">Removal From Program</h2>
-          <p>Cognita reserves the right to remove students from a batch for any of the following reasons:</p>
-          <ul className="space-y-2 ml-1 mt-3">
-            {[
-              "Inactivity or failure to submit weekly outputs without communication",
-              "Dishonest behavior, including submitting plagiarized or fake work",
-              "Violation of these Terms of Use",
-              "Disruptive or harmful conduct toward facilitators or other students",
-            ].map((item, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="text-cyan-400 mt-1 flex-shrink-0">·</span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-heading font-semibold text-foreground mb-3">Ethical AI Use</h2>
-          <p>Students are responsible for the ethical use of AI tools. This includes being transparent about AI assistance, verifying AI-generated content for accuracy, and not using AI to deceive, harm, or mislead. Cognita reserves the right to review and act on violations of ethical AI use.</p>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-heading font-semibold text-foreground mb-3">Program Changes</h2>
-          <p>Cognita may update the program structure, curriculum, schedule, requirements, or policies at any time. We will make reasonable efforts to notify enrolled students of significant changes. Continued participation in the program after changes are made constitutes acceptance of the updated terms.</p>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-heading font-semibold text-foreground mb-3">Contact</h2>
-          <p>For any questions about these Terms of Use, please contact:</p>
-          <div className="mt-3 p-4 rounded-lg bg-secondary/50 border border-border/50">
+          <h2 className="mb-3 text-lg font-semibold text-foreground">Contact</h2>
+          <p>Questions about these terms may be submitted through Contact and Support or emailed to:</p>
+          <div className="mt-3 rounded-lg border border-border/50 bg-secondary/50 p-4">
             <p className="text-sm font-medium">Cognita Institute of Artificial Intelligence</p>
-            <p className="text-sm text-cyan-400">support@cognita.ai</p>
+            <a href={`mailto:${OFFICIAL_EMAILS.support}`} className="text-sm text-cyan-400 hover:underline">{OFFICIAL_EMAILS.support}</a>
           </div>
         </section>
       </div>
