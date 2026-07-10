@@ -1,142 +1,183 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
+const SITE_URL = 'https://thecognitainstitute.com';
+const SUPPORT_EMAIL = 'support@thecognitainstitute.com';
+const CREDENTIAL_TITLE = 'Certificate of Completion';
+const ALLOWED_EMAIL_TYPES = new Set([
+  'application_submitted',
+  'application_accepted',
+  'application_waitlisted',
+  'application_rejected',
+  'application_status_changed',
+  'submission_reviewed',
+  'certificate_issued',
+  'payment_confirmed',
+  'announcement_published',
+  'teacher_app_submitted',
+]);
+
+function isValidEmail(value: unknown): value is string {
+  return typeof value === 'string' && value.length <= 320 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
+function safeText(value: unknown, fallback = ''): string {
+  if (typeof value !== 'string') return fallback;
+  return value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').trim().slice(0, 10000);
+}
+
+function learnerPortalLink(path = '/login'): string {
+  return `${SITE_URL}${path}`;
+}
+
 Deno.serve(async (req) => {
   try {
+    if (req.method !== 'POST') {
+      return Response.json({ error: 'Method not allowed' }, { status: 405 });
+    }
+
     const base44 = createClientFromRequest(req);
     const body = await req.json();
-    const { email_type, entity_id, entity_data } = body;
+    const emailType = safeText(body?.email_type, '').slice(0, 80);
+    const entityData = body?.entity_data && typeof body.entity_data === 'object' ? body.entity_data : {};
+
+    if (!ALLOWED_EMAIL_TYPES.has(emailType)) {
+      return Response.json({ error: 'Unsupported lifecycle email type' }, { status: 400 });
+    }
 
     const svc = base44.asServiceRole;
     let to = '';
     let subject = '';
     let emailBody = '';
 
-    if (email_type === 'application_submitted') {
-      const app = entity_data;
-      to = app.email;
-      subject = 'Application Received — Cognita Institute';
-      emailBody = `Dear ${app.full_name},\n\nThank you for applying to Cognita Institute. We have received your application for the ${app.preferred_track} track.\n\nOur admissions team will review your application and respond within 5-7 business days. Admission is selective and based on human review of your responses.\n\nYou can check your application status by signing in at cognita.app.\n\n— Cognita Institute Admissions`;
+    if (emailType === 'application_submitted') {
+      const app = entityData;
+      to = safeText(app.email);
+      subject = 'Application Received | Cognita Institute';
+      emailBody = `Dear ${safeText(app.full_name, 'Applicant')},\n\nThank you for applying to Cognita Institute. We have recorded your application for the ${safeText(app.preferred_track, 'selected')} track.\n\nThe Admissions Office will review your application. Applying does not guarantee acceptance, and admissions decisions are made by authorized personnel.\n\nFor your privacy, status details are not displayed through the public application form. Cognita will contact you using the information you submitted.\n\nSupport: ${SUPPORT_EMAIL}\n\nCognita Institute of Artificial Intelligence`;
     }
 
-    else if (email_type === 'application_accepted') {
-      const app = entity_data;
-      to = app.email;
-      subject = 'Welcome to Cognita Institute — Application Accepted';
-      emailBody = `Dear ${app.full_name},\n\nCongratulations! Your application to Cognita Institute has been accepted for the ${app.preferred_track} track.\n\nNext steps:\n1. Sign in to your student dashboard at cognita.app\n2. Review and sign your enrollment agreement\n3. Submit your tuition payment\n4. Access your Week 1 curriculum\n\nYour batch and facilitator will be assigned shortly. We look forward to your journey.\n\n— Cognita Institute`;
+    else if (emailType === 'application_accepted') {
+      const app = entityData;
+      to = safeText(app.email);
+      subject = 'Application Accepted | Cognita Institute';
+      emailBody = `Dear ${safeText(app.full_name, 'Applicant')},\n\nYour application to Cognita Institute has been accepted for the ${safeText(app.preferred_track, 'selected')} track.\n\nAcceptance is not yet full learning access. Your next steps may include account verification, enrollment agreement acceptance, invoice review, payment confirmation or an approved waiver, and batch assignment.\n\nSign in: ${learnerPortalLink('/login')}\nSupport: ${SUPPORT_EMAIL}\n\nCognita Institute of Artificial Intelligence`;
     }
 
-    else if (email_type === 'application_waitlisted') {
-      const app = entity_data;
-      to = app.email;
-      subject = 'Cognita Institute — Waitlist Update';
-      emailBody = `Dear ${app.full_name},\n\nThank you for your interest in Cognita Institute. Your application has been placed on our waitlist for the ${app.preferred_track} track.\n\nWe will notify you if a seat becomes available in the current or upcoming batch. In the meantime, your application remains active.\n\n— Cognita Institute Admissions`;
+    else if (emailType === 'application_waitlisted') {
+      const app = entityData;
+      to = safeText(app.email);
+      subject = 'Application Waitlist Update | Cognita Institute';
+      emailBody = `Dear ${safeText(app.full_name, 'Applicant')},\n\nYour application for the ${safeText(app.preferred_track, 'selected')} track has been placed on the Cognita waitlist. We will contact you if an appropriate place becomes available.\n\nSupport: ${SUPPORT_EMAIL}\n\nCognita Institute of Artificial Intelligence`;
     }
 
-    else if (email_type === 'application_rejected') {
-      const app = entity_data;
-      to = app.email;
-      subject = 'Cognita Institute — Application Update';
-      emailBody = `Dear ${app.full_name},\n\nThank you for your interest in Cognita Institute. After careful review, we are unable to offer you a seat at this time.\n\nThis decision is not a reflection of your potential — our cohorts are small and selective. We encourage you to apply again for a future batch.\n\n— Cognita Institute Admissions`;
+    else if (emailType === 'application_rejected') {
+      const app = entityData;
+      to = safeText(app.email);
+      subject = 'Application Update | Cognita Institute';
+      emailBody = `Dear ${safeText(app.full_name, 'Applicant')},\n\nAfter review, Cognita is unable to offer enrollment for this application at this time. Please refer to any specific information provided by the Admissions Office.\n\nQuestions may be submitted through ${learnerPortalLink('/contact')} or ${SUPPORT_EMAIL}.\n\nCognita Institute of Artificial Intelligence`;
     }
 
-    else if (email_type === 'application_status_changed') {
-      const app = entity_data;
-      const status = app.status;
+    else if (emailType === 'application_status_changed') {
+      const app = entityData;
+      const status = safeText(app.status);
+      to = safeText(app.email);
+
       if (status === 'Accepted') {
-        to = app.email;
-        subject = 'Welcome to Cognita Institute — Application Accepted';
-        emailBody = `Dear ${app.full_name},\n\nCongratulations! Your application to Cognita Institute has been accepted for the ${app.preferred_track} track.\n\nNext steps:\n1. Sign in to your student dashboard at cognita.app\n2. Review and sign your enrollment agreement\n3. Submit your tuition payment\n4. Access your Week 1 curriculum\n\nYour batch and facilitator will be assigned shortly. We look forward to your journey.\n\n— Cognita Institute`;
+        subject = 'Application Accepted | Cognita Institute';
+        emailBody = `Dear ${safeText(app.full_name, 'Applicant')},\n\nYour Cognita application has been accepted. Complete the remaining enrollment requirements before learning access is activated.\n\nSign in: ${learnerPortalLink('/login')}\nSupport: ${SUPPORT_EMAIL}\n\nCognita Institute of Artificial Intelligence`;
       } else if (status === 'Waitlisted') {
-        to = app.email;
-        subject = 'Cognita Institute — Waitlist Update';
-        emailBody = `Dear ${app.full_name},\n\nThank you for your interest in Cognita Institute. Your application has been placed on our waitlist for the ${app.preferred_track} track.\n\nWe will notify you if a seat becomes available in the current or upcoming batch. In the meantime, your application remains active.\n\n— Cognita Institute Admissions`;
+        subject = 'Application Waitlist Update | Cognita Institute';
+        emailBody = `Dear ${safeText(app.full_name, 'Applicant')},\n\nYour application is currently waitlisted. Cognita will contact you if an appropriate place becomes available.\n\nSupport: ${SUPPORT_EMAIL}\n\nCognita Institute of Artificial Intelligence`;
       } else if (status === 'Rejected') {
-        to = app.email;
-        subject = 'Cognita Institute — Application Update';
-        emailBody = `Dear ${app.full_name},\n\nThank you for your interest in Cognita Institute. After careful review, we are unable to offer you a seat at this time.\n\nThis decision is not a reflection of your potential — our cohorts are small and selective. We encourage you to apply again for a future batch.\n\n— Cognita Institute Admissions`;
+        subject = 'Application Update | Cognita Institute';
+        emailBody = `Dear ${safeText(app.full_name, 'Applicant')},\n\nCognita is unable to offer enrollment for this application at this time.\n\nSupport: ${SUPPORT_EMAIL}\n\nCognita Institute of Artificial Intelligence`;
       } else if (status === 'Enrolled') {
-        to = app.email;
-        subject = 'You Are Enrolled — Cognita Institute';
-        emailBody = `Dear ${app.full_name},\n\nYou have been officially enrolled in Cognita Institute. Welcome to the program!\n\nPlease complete your enrollment agreement and payment in your student dashboard to unlock your curriculum.\n\n— Cognita Institute`;
+        subject = 'Enrollment Record Created | Cognita Institute';
+        emailBody = `Dear ${safeText(app.full_name, 'Learner')},\n\nA Cognita enrollment record has been created. Learning access remains subject to the enrollment agreement, payment confirmation or approved waiver, and active access status.\n\nEnrollment status: ${learnerPortalLink('/student/payments')}\nSupport: ${SUPPORT_EMAIL}\n\nCognita Institute of Artificial Intelligence`;
       } else {
         return Response.json({ skipped: true, reason: `status ${status} does not trigger email` });
       }
     }
 
-    else if (email_type === 'submission_reviewed') {
-      const sub = entity_data;
-      const student = await svc.entities.Student.get(sub.student_id).catch(() => null);
+    else if (emailType === 'submission_reviewed') {
+      const submission = entityData;
+      const student = await svc.entities.Student.get(submission.student_id).catch(() => null);
       if (!student) return Response.json({ skipped: true, reason: 'student not found' });
-      to = student.email;
-      const statusLabel = sub.status === 'Passed' ? 'PASSED' : sub.status === 'Needs Revision' ? 'NEEDS REVISION' : 'FAILED';
-      subject = `Week ${sub.week_number} Submission — ${statusLabel}`;
-      const feedbackSection = sub.feedback ? `\n\nFacilitator Feedback:\n${sub.feedback}` : '';
-      const revisionSection = sub.status === 'Needs Revision' && sub.revision_instructions ? `\n\nRevision Instructions:\n${sub.revision_instructions}` : '';
-      emailBody = `Dear ${student.full_name},\n\nYour submission for Week ${sub.week_number} (${sub.title}) has been reviewed.\n\nStatus: ${statusLabel}${feedbackSection}${revisionSection}\n\nYou can view full details in your student dashboard at cognita.app.\n\n— Cognita Institute`;
+      to = safeText(student.email);
+      const status = safeText(submission.status);
+      const statusLabel = status === 'Passed' ? 'PASSED' : status === 'Needs Revision' ? 'REVISION REQUIRED' : 'NOT PASSED';
+      subject = `Week ${submission.week_number} Human Review | ${statusLabel}`;
+      const feedback = safeText(submission.feedback);
+      const revisionInstructions = safeText(submission.revision_instructions);
+      emailBody = `Dear ${safeText(student.full_name, 'Learner')},\n\nAn authorized human reviewer recorded a decision for Week ${submission.week_number}: ${statusLabel}.\n\n${feedback ? `Reviewer feedback:\n${feedback}\n\n` : ''}${status === 'Needs Revision' && revisionInstructions ? `Required revision:\n${revisionInstructions}\n\n` : ''}View the reviewed submission: ${learnerPortalLink(`/student/lesson/${submission.week_number}`)}\n\nCognita Institute of Artificial Intelligence`;
     }
 
-    else if (email_type === 'certificate_issued') {
-      const cert = entity_data;
-      const student = await svc.entities.Student.get(cert.student_id).catch(() => null);
-      to = student ? student.email : '';
+    else if (emailType === 'certificate_issued') {
+      const certificate = entityData;
+      const student = await svc.entities.Student.get(certificate.student_id).catch(() => null);
+      to = student ? safeText(student.email) : '';
       if (!to) return Response.json({ skipped: true, reason: 'student email not found' });
-      subject = 'Your Cognita Certificate Has Been Issued';
-      emailBody = `Dear ${cert.student_name},\n\nCongratulations! Your Certificate of Practical AI Competency has been issued.\n\nCertificate Serial: ${cert.serial_number}\nTrack: ${cert.track}\nBatch: ${cert.batch_name}\n\nYour certificate can be publicly verified at cognita.app/verify using your serial number.\n\nThis certificate was issued based on completed and reviewed outputs, not attendance.\n\n— Cognita Institute`;
+      subject = `${CREDENTIAL_TITLE} Issued | Cognita Institute`;
+      emailBody = `Dear ${safeText(certificate.student_name, 'Learner')},\n\nYour Cognita ${CREDENTIAL_TITLE} has been issued after the required human portfolio review and credential approval process.\n\nSerial number: ${safeText(certificate.serial_number)}\nTrack: ${safeText(certificate.track)}\nBatch: ${safeText(certificate.batch_name)}\n\nVerify: ${learnerPortalLink(`/verify?serial=${encodeURIComponent(safeText(certificate.serial_number))}`)}\n\nThis is a non-degree professional training record. It is not a diploma, academic credit, professional license, or attendance-only certificate.\n\nCognita Institute of Artificial Intelligence`;
     }
 
-    else if (email_type === 'payment_confirmed') {
-      const pay = entity_data;
-      to = pay.student_email;
-      subject = 'Payment Confirmed — Cognita Institute';
-      emailBody = `Dear ${pay.student_name},\n\nYour tuition payment has been confirmed.\n\nBatch: ${pay.batch_name}\nTrack: ${pay.track}\nAmount Paid: ${pay.amount_paid}\n\nYou now have full access to your curriculum. Welcome to the program.\n\n— Cognita Institute`;
+    else if (emailType === 'payment_confirmed') {
+      const payment = entityData;
+      to = safeText(payment.student_email);
+      subject = 'Payment Confirmed | Cognita Institute';
+      emailBody = `Dear ${safeText(payment.student_name, 'Learner')},\n\nYour Cognita payment record has been confirmed. Learning access also requires a signed enrollment agreement and active enrollment status.\n\nBatch: ${safeText(payment.batch_name)}\nTrack: ${safeText(payment.track)}\nAmount paid: ${String(payment.amount_paid ?? '')}\n\nCheck enrollment status: ${learnerPortalLink('/student/payments')}\nSupport: ${SUPPORT_EMAIL}\n\nCognita Institute of Artificial Intelligence`;
     }
 
-    else if (email_type === 'announcement_published') {
-      const ann = entity_data;
-      let students = [];
-      if (ann.audience === 'All Students') {
-        students = await svc.entities.Student.filter({ progress_status: { $ne: 'Removed' } }, '-created_date', 500);
-      } else if (ann.audience === 'Specific Track' && ann.track) {
-        students = await svc.entities.Student.filter({ track: ann.track, progress_status: { $ne: 'Removed' } }, '-created_date', 500);
-      } else if (ann.audience === 'Specific Batch' && ann.batch_id) {
-        students = await svc.entities.Student.filter({ batch_id: ann.batch_id, progress_status: { $ne: 'Removed' } }, '-created_date', 500);
-      } else if (ann.audience === 'Facilitators') {
-        students = await svc.entities.Facilitator.filter({ status: 'Active' }, '-created_date', 100);
+    else if (emailType === 'announcement_published') {
+      const announcement = entityData;
+      let recipients = [];
+      if (announcement.audience === 'All Students') {
+        recipients = await svc.entities.Student.filter({ progress_status: { $ne: 'Removed' } }, '-created_date', 500);
+      } else if (announcement.audience === 'Specific Track' && announcement.track) {
+        recipients = await svc.entities.Student.filter({ track: announcement.track, progress_status: { $ne: 'Removed' } }, '-created_date', 500);
+      } else if (announcement.audience === 'Specific Batch' && announcement.batch_id) {
+        recipients = await svc.entities.Student.filter({ batch_id: announcement.batch_id, progress_status: { $ne: 'Removed' } }, '-created_date', 500);
+      } else if (announcement.audience === 'Facilitators') {
+        recipients = await svc.entities.Facilitator.filter({ status: 'Active' }, '-created_date', 100);
       }
-      const priorityLabel = ann.priority === 'Urgent' ? '[URGENT] ' : ann.priority === 'Important' ? '[Important] ' : '';
+
+      const priorityLabel = announcement.priority === 'Urgent' ? '[URGENT] ' : announcement.priority === 'Important' ? '[Important] ' : '';
+      const title = safeText(announcement.title, 'Cognita Announcement').slice(0, 200);
+      const announcementBody = safeText(announcement.body);
       const results = [];
-      for (const s of students) {
-        if (!s.email) continue;
+
+      for (const recipient of recipients) {
+        if (!isValidEmail(recipient.email)) continue;
         try {
           await svc.integrations.Core.SendEmail({
-            to: s.email,
-            subject: `${priorityLabel}${ann.title}`,
-            body: `${ann.body}\n\n— Cognita Institute`,
+            to: recipient.email.trim(),
+            subject: `${priorityLabel}${title}`,
+            body: `${announcementBody}\n\nView Cognita: ${SITE_URL}\nSupport: ${SUPPORT_EMAIL}\n\nCognita Institute of Artificial Intelligence`,
           });
-          results.push(s.email);
-        } catch (e) { /* skip failed sends */ }
+          results.push(recipient.email);
+        } catch {
+          // Continue sending to remaining authorized recipients.
+        }
       }
-      return Response.json({ sent_to: results.length, emails: results });
+      return Response.json({ sent_to: results.length });
     }
 
-    else if (email_type === 'teacher_app_submitted') {
-      const ta = entity_data;
-      to = ta.email;
-      subject = 'Application Received — Cognita Educator Program';
-      emailBody = `Dear ${ta.full_name},\n\nThank you for your interest in becoming a Cognita facilitator. We have received your application.\n\nOur team will review your qualifications and reach out within 7-10 business days regarding next steps, which may include an interview.\n\n— Cognita Institute`;
+    else if (emailType === 'teacher_app_submitted') {
+      const application = entityData;
+      to = safeText(application.email);
+      subject = 'Educator Application Received | Cognita Institute';
+      emailBody = `Dear ${safeText(application.full_name, 'Applicant')},\n\nCognita has recorded your educator or facilitator application. The application will be reviewed by authorized personnel. Submission does not guarantee appointment, employment, assignment, or compensation.\n\nSupport: ${SUPPORT_EMAIL}\n\nCognita Institute of Artificial Intelligence`;
     }
 
-    else {
-      return Response.json({ error: `Unknown email_type: ${email_type}` }, { status: 400 });
+    if (!isValidEmail(to)) {
+      return Response.json({ skipped: true, reason: 'invalid or missing recipient email' });
     }
-
-    if (!to) return Response.json({ skipped: true, reason: 'no recipient email' });
 
     try {
-      await svc.integrations.Core.SendEmail({ to, subject, body: emailBody });
-      return Response.json({ sent: true, to, email_type });
-    } catch (sendErr) {
-      return Response.json({ sent: false, to, email_type, reason: sendErr.message });
+      await svc.integrations.Core.SendEmail({ to: to.trim(), subject, body: emailBody });
+      return Response.json({ sent: true, email_type: emailType });
+    } catch (sendError) {
+      return Response.json({ sent: false, email_type: emailType, reason: sendError.message }, { status: 502 });
     }
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

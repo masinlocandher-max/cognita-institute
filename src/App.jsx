@@ -38,6 +38,7 @@ const AdminStudents = lazy(() => import('@/pages/admin/AdminStudents'));
 const AdminBatches = lazy(() => import('@/pages/admin/AdminBatches'));
 const AdminFacilitators = lazy(() => import('@/pages/admin/AdminFacilitators'));
 const AdminSubmissions = lazy(() => import('@/pages/admin/AdminSubmissions'));
+const AdminPortfolioAudits = lazy(() => import('@/pages/admin/AdminPortfolioAudits'));
 const AdminCertificates = lazy(() => import('@/pages/admin/AdminCertificates'));
 const AdminTracks = lazy(() => import('@/pages/admin/AdminTracks'));
 const AdminLessons = lazy(() => import('@/pages/admin/AdminLessons'));
@@ -54,6 +55,7 @@ const AdminRefunds = lazy(() => import('@/pages/admin/AdminRefunds'));
 const AdminPartnerInquiries = lazy(() => import('@/pages/admin/AdminPartnerInquiries'));
 const AdminLeads = lazy(() => import('@/pages/admin/AdminLeads'));
 const AdminWaitlist = lazy(() => import('@/pages/admin/AdminWaitlist'));
+const AdminSupportTickets = lazy(() => import('@/pages/admin/AdminSupportTickets'));
 const StudentDashboard = lazy(() => import('@/pages/student/StudentDashboard'));
 const StudentProgram = lazy(() => import('@/pages/student/StudentProgram'));
 const StudentLesson = lazy(() => import('@/pages/student/StudentLesson'));
@@ -127,12 +129,14 @@ const AuthenticatedApp = () => {
             <Route path="/dashboard/batches" element={<AdminBatches />} />
             <Route path="/dashboard/facilitators" element={<AdminFacilitators />} />
             <Route path="/dashboard/submissions" element={<AdminSubmissions />} />
+            <Route path="/dashboard/portfolio-audits" element={<AdminPortfolioAudits />} />
             <Route path="/dashboard/certificates" element={<AdminCertificates />} />
             <Route path="/dashboard/tracks" element={<AdminTracks />} />
             <Route path="/dashboard/lessons" element={<AdminLessons />} />
             <Route path="/dashboard/quizzes" element={<AdminQuizzes />} />
             <Route path="/dashboard/announcements" element={<AdminAnnouncements />} />
             <Route path="/dashboard/messages" element={<AdminMessages />} />
+            <Route path="/dashboard/support" element={<AdminSupportTickets />} />
             <Route path="/dashboard/playstore" element={<AdminPlayStore />} />
             <Route path="/dashboard/payments" element={<AdminPayments />} />
             <Route path="/dashboard/invoices" element={<AdminInvoices />} />

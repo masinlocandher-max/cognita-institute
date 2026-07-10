@@ -39,6 +39,9 @@ jobs:
         env:
           VITE_DEPLOY_TARGET: custom-domain
           VITE_PUBLIC_SITE_URL: https://thecognitainstitute.com
+          VITE_BASE44_APP_ID: ${{ secrets.VITE_BASE44_APP_ID }}
+          VITE_BASE44_APP_BASE_URL: ${{ secrets.VITE_BASE44_APP_BASE_URL }}
+          VITE_BASE44_FUNCTIONS_VERSION: ${{ secrets.VITE_BASE44_FUNCTIONS_VERSION }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

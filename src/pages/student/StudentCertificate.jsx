@@ -4,11 +4,13 @@ import { Loader2, Award, ShieldCheck, CheckCircle, Circle } from "lucide-react";
 import CertificateBadge from "@/components/curriculum/CertificateBadge";
 import CertificateTemplate from "@/components/CertificateTemplate";
 import { getEffectiveCertificateStatus, getCertificateRequirements } from "@/lib/curriculum-utils";
+import { HUMAN_REVIEW_NOTICE, OFFICIAL_CREDENTIAL_TITLE } from "@/lib/governance";
 
 export default function StudentCertificate() {
   const [student, setStudent] = useState(null);
-  const [cert, setCert] = useState(null);
+  const [certificate, setCertificate] = useState(null);
   const [submissions, setSubmissions] = useState([]);
+  const [audits, setAudits] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,13 +18,17 @@ export default function StudentCertificate() {
       const user = await base44.auth.me();
       const students = await base44.entities.Student.filter({ email: user.email });
       if (students.length > 0) {
-        const s = students[0];
-        setStudent(s);
-        const subs = await base44.entities.Submission.filter({ student_id: s.id });
-        setSubmissions(subs);
-        if (s.certificate_id) {
-          const certs = await base44.entities.Certificate.filter({ serial_number: s.certificate_id });
-          if (certs.length > 0) setCert(certs[0]);
+        const currentStudent = students[0];
+        setStudent(currentStudent);
+        const [studentSubmissions, portfolioAudits] = await Promise.all([
+          base44.entities.Submission.filter({ student_id: currentStudent.id }),
+          base44.entities.PortfolioAudit.filter({ student_id: currentStudent.id }).catch(() => []),
+        ]);
+        setSubmissions(studentSubmissions);
+        setAudits(portfolioAudits.sort((a, b) => (b.portfolio_version || 0) - (a.portfolio_version || 0)));
+        if (currentStudent.certificate_id) {
+          const certificates = await base44.entities.Certificate.filter({ serial_number: currentStudent.certificate_id });
+          if (certificates.length > 0) setCertificate(certificates[0]);
         }
       }
       setLoading(false);
@@ -31,73 +37,65 @@ export default function StudentCertificate() {
   }, []);
 
   if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="animate-spin text-muted-foreground" size={24} /></div>;
+  if (!student) return <div className="py-20 text-center text-muted-foreground">Not enrolled yet.</div>;
 
-  if (!student) return <div className="text-center py-20 text-muted-foreground">Not enrolled yet.</div>;
-
-  const certStatus = getEffectiveCertificateStatus(student, submissions);
+  const certificateStatus = getEffectiveCertificateStatus(student, submissions);
   const requirements = getCertificateRequirements(submissions);
+  const latestAudit = audits[0] || null;
+  const auditPassed = ["Cognita Standard Met", "Credential Approved", "Closed"].includes(latestAudit?.status);
+  const credentialApproved = ["Credential Approved", "Closed"].includes(latestAudit?.status) || student.certificate_status === "Approved" || student.certificate_status === "Issued";
+  const completeRequirements = [
+    ...requirements,
+    { label: "Human portfolio audit completed", done: auditPassed, value: latestAudit?.status || "Not submitted" },
+    { label: "Credential issuance approved", done: credentialApproved, value: credentialApproved ? "Approved" : "Pending" },
+  ];
 
-  // If certificate is issued, show the certificate
-  if (cert) {
+  if (certificate) {
     return (
       <div>
-        <h1 className="text-xl md:text-2xl font-heading font-bold mb-6">Your Certificate</h1>
-        <CertificateTemplate certificate={cert} />
-        <div className="mt-6 max-w-[800px] mx-auto p-4 rounded-lg border border-border/50 bg-card text-center">
-          <p className="text-xs text-muted-foreground">
-            <ShieldCheck size={14} className="inline mr-1.5 text-cyan-400" />
-            Serial: <span className="font-mono">{cert.serial_number}</span> · Verify at our public verification page.
-          </p>
+        <h1 className="mb-6 text-xl font-bold md:text-2xl">Your {certificate.title || OFFICIAL_CREDENTIAL_TITLE}</h1>
+        <CertificateTemplate certificate={certificate} />
+        <div className="mx-auto mt-6 max-w-[800px] rounded-lg border border-border/50 bg-card p-4 text-center">
+          <p className="text-xs text-muted-foreground"><ShieldCheck size={14} className="mr-1.5 inline text-cyan-400" />Serial: <span className="font-mono">{certificate.serial_number}</span> · Verify through the public credential registry.</p>
         </div>
       </div>
     );
   }
 
-  // Otherwise show eligibility status
   return (
     <div>
-      <h1 className="text-xl md:text-2xl font-heading font-bold mb-6">Certificate</h1>
+      <h1 className="mb-6 text-xl font-bold md:text-2xl">{OFFICIAL_CREDENTIAL_TITLE}</h1>
 
-      <div className="rounded-xl border border-border/50 bg-card p-6 md:p-8 text-center mb-6">
-        <Award size={40} className="text-muted-foreground mx-auto mb-4" />
-        <h2 className="text-lg font-semibold mb-2">Certificate Not Yet Issued</h2>
-        <div className="mb-4">
-          <CertificateBadge status={certStatus} size="lg" />
-        </div>
-        <p className="text-sm text-muted-foreground max-w-md mx-auto mb-4">
-          Certificates are issued only after all 10 weekly outputs are submitted and passed, including the final capstone. An admin will manually review and issue your certificate.
-        </p>
+      <div className="mb-6 rounded-xl border border-border/50 bg-card p-6 text-center md:p-8">
+        <Award size={40} className="mx-auto mb-4 text-muted-foreground" />
+        <h2 className="mb-2 text-lg font-semibold">Credential Not Yet Issued</h2>
+        <div className="mb-4"><CertificateBadge status={certificateStatus} size="lg" /></div>
+        <p className="mx-auto mb-4 max-w-lg text-sm text-muted-foreground">{HUMAN_REVIEW_NOTICE}</p>
+        {latestAudit && <p className="text-xs text-cyan-400">Latest portfolio audit: {latestAudit.audit_reference} · {latestAudit.status}</p>}
       </div>
 
-      {/* Requirements */}
       <div className="rounded-xl border border-border/50 bg-card p-5">
-        <p className="text-sm font-semibold mb-4">Eligibility Requirements</p>
+        <p className="mb-4 text-sm font-semibold">Eligibility and Approval Requirements</p>
         <div className="space-y-3">
-          {requirements.map((req, i) => (
-            <div key={i} className="flex items-center justify-between">
+          {completeRequirements.map((requirement) => (
+            <div key={requirement.label} className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                {req.done ? <CheckCircle size={16} className="text-emerald-400" /> : <Circle size={16} className="text-muted-foreground" />}
-                <span className={`text-sm ${req.done ? "text-foreground" : "text-muted-foreground"}`}>{req.label}</span>
+                {requirement.done ? <CheckCircle size={16} className="text-emerald-400" /> : <Circle size={16} className="text-muted-foreground" />}
+                <span className={`text-sm ${requirement.done ? "text-foreground" : "text-muted-foreground"}`}>{requirement.label}</span>
               </div>
-              <span className="text-sm font-mono text-muted-foreground">{req.value}</span>
+              <span className="text-right font-mono text-xs text-muted-foreground">{requirement.value}</span>
             </div>
           ))}
         </div>
 
-        {certStatus === "Ready for Review" && (
-          <div className="mt-4 p-3 rounded-lg border border-amber-500/20 bg-amber-500/5 text-sm text-amber-400">
-            All requirements met. Your portfolio is ready for review. An admin will review and issue your certificate.
-          </div>
+        {latestAudit?.status === "Revision Required" && (
+          <div className="mt-4 rounded-lg border border-orange-500/20 bg-orange-500/5 p-3 text-sm text-orange-400">Your portfolio needs revision. Open the Portfolio Center for the reviewer&apos;s instructions and resubmission workflow.</div>
         )}
-        {certStatus === "In Progress" && (
-          <div className="mt-4 p-3 rounded-lg border border-blue-500/20 bg-blue-500/5 text-sm text-blue-400">
-            You're making progress. Complete all requirements to become eligible for certificate review.
-          </div>
+        {latestAudit?.status === "Cognita Standard Met" && (
+          <div className="mt-4 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3 text-sm text-emerald-400">Your portfolio met the Cognita Standard. Credential authorization is pending.</div>
         )}
-        {certStatus === "Not Eligible" && (
-          <div className="mt-4 p-3 rounded-lg border border-border/30 bg-secondary/30 text-sm text-muted-foreground">
-            Your certificate is not eligible yet. Start submitting your weekly outputs to build eligibility.
-          </div>
+        {credentialApproved && student.certificate_status !== "Issued" && (
+          <div className="mt-4 rounded-lg border border-cyan-500/20 bg-cyan-500/5 p-3 text-sm text-cyan-400">Credential issuance has been approved. The Registrar must create the official record and serial number.</div>
         )}
       </div>
     </div>
