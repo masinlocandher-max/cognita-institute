@@ -42,7 +42,7 @@ export default function CognitaIntroTransition({ onComplete }) {
       />
 
       <motion.div
-        className="absolute left-1/2 top-1/2 h-[36rem] w-[36rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-sky-400/15"
+        className="absolute left-1/2 top-1/2 h-[36rem] w-[36rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-sky-400/20"
         initial={{ scale: 0.72, opacity: 0 }}
         animate={{ scale: 1.12, opacity: [0, 0.75, 0] }}
         transition={{ duration: 2.4, ease: "easeOut" }}
@@ -70,7 +70,7 @@ export default function CognitaIntroTransition({ onComplete }) {
         >
           <BrandLockup size="lg" />
           <motion.p
-            className="mt-9 text-[10px] md:text-xs font-medium uppercase tracking-[0.34em] text-sky-100/55"
+            className="mt-9 text-[10px] md:text-xs font-medium uppercase tracking-[0.34em] text-sky-100/60"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.15, duration: 0.6 }}
