@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { PAYMENT_STATUSES, PAYMENT_METHODS, DISCOUNT_TYPES, DEFAULT_TUITION_FEE, calculateDiscount, calculateAmountDue, formatCurrency, generateReceiptNumber, getNextSequence } from "@/lib/business-utils";
+import { PAYMENT_STATUSES, DISCOUNT_TYPES, DEFAULT_TUITION_FEE, calculateDiscount, calculateAmountDue, formatCurrency, generateReceiptNumber, getNextSequence } from "@/lib/business-utils";
 import EmptyState from "@/components/curriculum/EmptyState";
 
 export default function AdminPayments() {

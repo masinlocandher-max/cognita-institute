@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
@@ -8,77 +9,75 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
-// Public pages
-import PublicLayout from '@/components/public/PublicLayout';
-import Home from '@/pages/Home';
-import About from '@/pages/About';
-import Program from '@/pages/Program';
-import Tracks from '@/pages/Tracks';
-import Faq from '@/pages/Faq';
-import Apply from '@/pages/Apply';
-import Verify from '@/pages/Verify';
-import Privacy from '@/pages/Privacy';
-import Terms from '@/pages/Terms';
-import Contact from '@/pages/Contact';
-import Partner from '@/pages/Partner';
-import Waitlist from '@/pages/Waitlist';
-import Teach from '@/pages/Teach';
+// Route-level code splitting keeps the landing page light and loads
+// dashboards and role-specific tools only when they are opened.
+const PublicLayout = lazy(() => import('@/components/public/PublicLayout'));
+const Home = lazy(() => import('@/pages/Home'));
+const About = lazy(() => import('@/pages/About'));
+const Program = lazy(() => import('@/pages/Program'));
+const Tracks = lazy(() => import('@/pages/Tracks'));
+const Faq = lazy(() => import('@/pages/Faq'));
+const Apply = lazy(() => import('@/pages/Apply'));
+const Verify = lazy(() => import('@/pages/Verify'));
+const Privacy = lazy(() => import('@/pages/Privacy'));
+const Terms = lazy(() => import('@/pages/Terms'));
+const Contact = lazy(() => import('@/pages/Contact'));
+const Partner = lazy(() => import('@/pages/Partner'));
+const Waitlist = lazy(() => import('@/pages/Waitlist'));
+const Teach = lazy(() => import('@/pages/Teach'));
+const Login = lazy(() => import('@/pages/Login'));
+const Register = lazy(() => import('@/pages/Register'));
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
+const AdminDashboardWrapper = lazy(() => import('@/pages/AdminDashboardWrapper'));
+const FacilitatorDashboardWrapper = lazy(() => import('@/pages/FacilitatorDashboardWrapper'));
+const StudentDashboardWrapper = lazy(() => import('@/pages/StudentDashboardWrapper'));
+const AdminOverview = lazy(() => import('@/pages/admin/AdminOverview'));
+const AdminApplications = lazy(() => import('@/pages/admin/AdminApplications'));
+const AdminStudents = lazy(() => import('@/pages/admin/AdminStudents'));
+const AdminBatches = lazy(() => import('@/pages/admin/AdminBatches'));
+const AdminFacilitators = lazy(() => import('@/pages/admin/AdminFacilitators'));
+const AdminSubmissions = lazy(() => import('@/pages/admin/AdminSubmissions'));
+const AdminCertificates = lazy(() => import('@/pages/admin/AdminCertificates'));
+const AdminTracks = lazy(() => import('@/pages/admin/AdminTracks'));
+const AdminLessons = lazy(() => import('@/pages/admin/AdminLessons'));
+const AdminPlayStore = lazy(() => import('@/pages/admin/AdminPlayStore'));
+const AdminAnnouncements = lazy(() => import('@/pages/admin/AdminAnnouncements'));
+const AdminQuizzes = lazy(() => import('@/pages/admin/AdminQuizzes'));
+const AdminMessages = lazy(() => import('@/pages/admin/AdminMessages'));
+const AdminTeacherApplications = lazy(() => import('@/pages/admin/AdminTeacherApplications'));
+const AdminAnalytics = lazy(() => import('@/pages/admin/AdminAnalytics'));
+const AdminPayments = lazy(() => import('@/pages/admin/AdminPayments'));
+const AdminInvoices = lazy(() => import('@/pages/admin/AdminInvoices'));
+const AdminReceipts = lazy(() => import('@/pages/admin/AdminReceipts'));
+const AdminRefunds = lazy(() => import('@/pages/admin/AdminRefunds'));
+const AdminPartnerInquiries = lazy(() => import('@/pages/admin/AdminPartnerInquiries'));
+const AdminLeads = lazy(() => import('@/pages/admin/AdminLeads'));
+const AdminWaitlist = lazy(() => import('@/pages/admin/AdminWaitlist'));
+const StudentDashboard = lazy(() => import('@/pages/student/StudentDashboard'));
+const StudentProgram = lazy(() => import('@/pages/student/StudentProgram'));
+const StudentLesson = lazy(() => import('@/pages/student/StudentLesson'));
+const StudentPortfolio = lazy(() => import('@/pages/student/StudentPortfolio'));
+const StudentCertificate = lazy(() => import('@/pages/student/StudentCertificate'));
+const StudentPayments = lazy(() => import('@/pages/student/StudentPayments'));
+const StudentAnnouncements = lazy(() => import('@/pages/student/StudentAnnouncements'));
+const StudentMessages = lazy(() => import('@/pages/student/StudentMessages'));
+const StudentQuiz = lazy(() => import('@/pages/student/StudentQuiz'));
+const StudentEnrollmentAgreement = lazy(() => import('@/pages/student/StudentEnrollmentAgreement'));
+const FacilitatorOverview = lazy(() => import('@/pages/facilitator/FacilitatorOverview'));
+const FacilitatorStudents = lazy(() => import('@/pages/facilitator/FacilitatorStudents'));
+const FacilitatorSubmissions = lazy(() => import('@/pages/facilitator/FacilitatorSubmissions'));
+const FacilitatorMessages = lazy(() => import('@/pages/facilitator/FacilitatorMessages'));
 
-// Auth pages
-import Login from '@/pages/Login';
-import Register from '@/pages/Register';
-import ForgotPassword from '@/pages/ForgotPassword';
-import ResetPassword from '@/pages/ResetPassword';
-
-// Dashboard wrappers
-import AdminDashboardWrapper from '@/pages/AdminDashboardWrapper';
-import FacilitatorDashboardWrapper from '@/pages/FacilitatorDashboardWrapper';
-import StudentDashboardWrapper from '@/pages/StudentDashboardWrapper';
-
-// Admin pages
-import AdminOverview from '@/pages/admin/AdminOverview';
-import AdminApplications from '@/pages/admin/AdminApplications';
-import AdminStudents from '@/pages/admin/AdminStudents';
-import AdminBatches from '@/pages/admin/AdminBatches';
-import AdminFacilitators from '@/pages/admin/AdminFacilitators';
-import AdminSubmissions from '@/pages/admin/AdminSubmissions';
-import AdminCertificates from '@/pages/admin/AdminCertificates';
-import AdminTracks from '@/pages/admin/AdminTracks';
-import AdminLessons from '@/pages/admin/AdminLessons';
-import AdminPlayStore from '@/pages/admin/AdminPlayStore';
-import AdminAnnouncements from '@/pages/admin/AdminAnnouncements';
-import AdminQuizzes from '@/pages/admin/AdminQuizzes';
-import AdminMessages from '@/pages/admin/AdminMessages';
-import AdminTeacherApplications from '@/pages/admin/AdminTeacherApplications';
-import AdminAnalytics from '@/pages/admin/AdminAnalytics';
-import AdminPayments from '@/pages/admin/AdminPayments';
-import AdminInvoices from '@/pages/admin/AdminInvoices';
-import AdminReceipts from '@/pages/admin/AdminReceipts';
-import AdminRefunds from '@/pages/admin/AdminRefunds';
-import AdminPartnerInquiries from '@/pages/admin/AdminPartnerInquiries';
-import AdminLeads from '@/pages/admin/AdminLeads';
-import AdminWaitlist from '@/pages/admin/AdminWaitlist';
-
-// Student pages
-import StudentDashboard from '@/pages/student/StudentDashboard';
-import StudentProgram from '@/pages/student/StudentProgram';
-import StudentLesson from '@/pages/student/StudentLesson';
-import StudentPortfolio from '@/pages/student/StudentPortfolio';
-import StudentCertificate from '@/pages/student/StudentCertificate';
-import StudentPayments from '@/pages/student/StudentPayments';
-import StudentAnnouncements from '@/pages/student/StudentAnnouncements';
-import StudentMessages from '@/pages/student/StudentMessages';
-import StudentQuiz from '@/pages/student/StudentQuiz';
-import StudentEnrollmentAgreement from '@/pages/student/StudentEnrollmentAgreement';
-
-// Facilitator pages
-import FacilitatorOverview from '@/pages/facilitator/FacilitatorOverview';
-import FacilitatorStudents from '@/pages/facilitator/FacilitatorStudents';
-import FacilitatorSubmissions from '@/pages/facilitator/FacilitatorSubmissions';
-import FacilitatorMessages from '@/pages/facilitator/FacilitatorMessages';
+const RouteLoadingFallback = () => (
+  <div className="fixed inset-0 flex items-center justify-center bg-background" role="status" aria-live="polite">
+    <div className="w-8 h-8 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin" />
+    <span className="sr-only">Loading page</span>
+  </div>
+);
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { isLoadingAuth, isLoadingPublicSettings, authError } = useAuth();
 
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
@@ -95,7 +94,8 @@ const AuthenticatedApp = () => {
   }
 
   return (
-    <Routes>
+    <Suspense fallback={<RouteLoadingFallback />}>
+      <Routes>
       {/* Public pages */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
@@ -170,7 +170,8 @@ const AuthenticatedApp = () => {
       </Route>
 
       <Route path="*" element={<PageNotFound />} />
-    </Routes>
+      </Routes>
+    </Suspense>
   );
 };
 

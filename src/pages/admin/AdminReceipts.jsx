@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Loader2, Eye } from "lucide-react";
-import StatusBadge from "@/components/dashboard/StatusBadge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import EmptyState from "@/components/curriculum/EmptyState";
 import { formatCurrency } from "@/lib/business-utils";

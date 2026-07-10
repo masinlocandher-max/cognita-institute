@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Loader2, Plus, Trash2, HelpCircle, Eye, Edit2 } from "lucide-react";
+import { Loader2, Plus, Trash2, HelpCircle, Edit2 } from "lucide-react";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";

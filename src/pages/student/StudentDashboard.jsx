@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Loader2, BookOpen, FileText, Award, Clock, FolderOpen, CheckCircle, Circle, AlertTriangle, MessageSquare, ChevronRight, CreditCard } from "lucide-react";
+import { Loader2, BookOpen, FileText, Clock, FolderOpen, CheckCircle, Circle, AlertTriangle, MessageSquare, ChevronRight, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
 import StatCard from "@/components/dashboard/StatCard";
 import StatusBadge from "@/components/dashboard/StatusBadge";

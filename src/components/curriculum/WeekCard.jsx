@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Lock, ChevronRight, CheckCircle, AlertCircle, Clock } from "lucide-react";
+import { Lock, ChevronRight, CheckCircle, AlertCircle } from "lucide-react";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 import { getWeekStatus } from "@/lib/curriculum-utils";
 

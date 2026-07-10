@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { ClipboardList, Users, GraduationCap, Award, FileText, Loader2, DollarSign, Receipt, Handshake, UserPlus, Clock, AlertTriangle } from "lucide-react";
+import { ClipboardList, Users, GraduationCap, Award, FileText, Loader2, DollarSign, Handshake, UserPlus, Clock, AlertTriangle } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 import { Link } from "react-router-dom";

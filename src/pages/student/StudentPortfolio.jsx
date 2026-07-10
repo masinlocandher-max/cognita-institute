@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Loader2, AlertTriangle, FileText, ExternalLink, CheckCircle } from "lucide-react";
+import { Loader2, AlertTriangle, FileText, ExternalLink } from "lucide-react";
 import EmptyState from "@/components/curriculum/EmptyState";
 import PortfolioProgress from "@/components/curriculum/PortfolioProgress";
 import { getCurriculumForTrack, getPortfolioByCategory } from "@/lib/curriculum-utils";

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Loader2, Eye } from "lucide-react";
 import StatusBadge from "@/components/dashboard/StatusBadge";
-import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";

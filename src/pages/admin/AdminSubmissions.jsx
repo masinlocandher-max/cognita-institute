@@ -7,7 +7,7 @@ import EmptyState from "@/components/curriculum/EmptyState";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { getWeekLesson } from "@/lib/curriculum-utils";
-import { computeStudentUpdates, computeCertificateEligibility } from "@/lib/curriculum-utils";
+import { computeStudentUpdates } from "@/lib/curriculum-utils";
 
 export default function AdminSubmissions() {
   const [subs, setSubs] = useState([]);

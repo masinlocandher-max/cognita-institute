@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import {
   LayoutDashboard, Users, BookOpen, FileText, Award,
-  ClipboardList, Settings, LogOut, Menu, X, ChevronDown,
-  GraduationCap, UserCheck, DollarSign, BarChart3, Layers, BookMarked, ExternalLink, Smartphone,
+  ClipboardList, LogOut, Menu, X,
+  GraduationCap, UserCheck, DollarSign, Layers, BookMarked, ExternalLink, Smartphone,
   Receipt, RefreshCcw, Handshake, UserPlus, Clock, CreditCard,
   Megaphone, HelpCircle, MessageSquare, BarChart
 } from "lucide-react";
