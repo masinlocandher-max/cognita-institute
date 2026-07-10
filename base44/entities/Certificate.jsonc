@@ -1,0 +1,62 @@
+{
+  "name": "Certificate",
+  "type": "object",
+  "properties": {
+    "student_id": {
+      "type": "string"
+    },
+    "student_name": {
+      "type": "string"
+    },
+    "serial_number": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "default": "Certificate of Practical AI Competency"
+    },
+    "track": {
+      "type": "string"
+    },
+    "track_code": {
+      "type": "string"
+    },
+    "batch_name": {
+      "type": "string"
+    },
+    "batch_number": {
+      "type": "string"
+    },
+    "issued_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "issued_by": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Under Review",
+        "Approved",
+        "Issued",
+        "Revoked"
+      ],
+      "default": "Under Review"
+    },
+    "revoked_reason": {
+      "type": "string"
+    },
+    "verification_note": {
+      "type": "string",
+      "default": "This certificate was issued based on completed and reviewed outputs, not attendance."
+    }
+  },
+  "required": [
+    "student_id",
+    "student_name",
+    "serial_number",
+    "track",
+    "batch_name"
+  ]
+}
