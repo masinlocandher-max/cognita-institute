@@ -13,8 +13,7 @@ import BrandLockup from "@/components/BrandLockup";
 import CognitaIntroTransition from "@/components/CognitaIntroTransition";
 import FounderPreview from "@/components/FounderPreview";
 import ProgramPortfolio from "@/components/ProgramPortfolio";
-import ProgramIcon from "@/components/ProgramIcon";
-import { FLAGSHIP_PROGRAM } from "@/lib/program-portfolio";
+import { EDITORIAL_ASSETS, FLAGSHIP_PROGRAM } from "@/lib/program-portfolio";
 
 const STATS = [
   { value: "4", label: "Professional learning pathways" },
@@ -106,45 +105,39 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="apple-hero-visual" aria-label="Cognita learning system overview">
-            <div className="absolute inset-x-8 top-8 flex items-center justify-between text-[11px] uppercase tracking-[0.18em] text-slate-400">
-              <span>Cognita learning environment</span>
-              <span className="rounded-full border border-emerald-300/15 bg-emerald-300/[0.07] px-3 py-1 text-emerald-200/80">System active</span>
+          <div className="relative min-h-[28rem] overflow-hidden rounded-[2.4rem] border border-white/10 bg-slate-950 shadow-[0_48px_120px_rgba(0,0,0,0.42)] md:min-h-[34rem]">
+            <img
+              src={EDITORIAL_ASSETS.hero}
+              alt="Professional learner using a silver MacBook in a premium Cognita learning environment."
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              referrerPolicy="no-referrer"
+              className="absolute inset-0 h-full w-full object-cover"
+              onError={(event) => {
+                event.currentTarget.style.display = "none";
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#050914]/35 via-transparent to-black/10" aria-hidden="true" />
+            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#050914] via-[#050914]/45 to-transparent" aria-hidden="true" />
+
+            <div className="absolute left-6 top-6 rounded-full border border-white/15 bg-[#050914]/66 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.17em] text-sky-100/80 backdrop-blur-xl md:left-8 md:top-8">
+              Cognita learning environment
             </div>
 
-            <div className="apple-device-panel left-7 right-7 top-20 p-5 md:left-10 md:right-10 md:p-6">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-sky-300/70">Flagship pathway</p>
-                  <h2 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-white md:text-2xl">{FLAGSHIP_PROGRAM.name}</h2>
-                  <p className="mt-2 text-sm text-slate-400">Under {FLAGSHIP_PROGRAM.parent}</p>
+            <div className="absolute inset-x-5 bottom-5 rounded-[1.5rem] border border-white/12 bg-[#07101f]/82 p-5 shadow-2xl backdrop-blur-2xl md:inset-x-7 md:bottom-7 md:p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl border border-sky-300/15 bg-sky-300/[0.08] text-sky-300">
+                  <ShieldCheck size={21} />
                 </div>
-                <div className="apple-icon-tile flex-shrink-0">
-                  <ProgramIcon name="professional-programs" size={26} />
+                <div className="min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-sky-300/70">Flagship guided pathway</p>
+                  <h2 className="mt-2 text-lg font-semibold tracking-[-0.025em] text-white md:text-xl">{FLAGSHIP_PROGRAM.name}</h2>
+                  <p className="mt-2 text-xs leading-5 text-slate-400 md:text-sm">
+                    Structured cohort learning, facilitator review, portfolio development, and completion verification.
+                  </p>
                 </div>
               </div>
-              <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/[0.06]">
-                <div className="h-full w-[68%] rounded-full bg-gradient-to-r from-sky-400 to-cyan-200" />
-              </div>
-              <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
-                <span>Foundation</span>
-                <span>Specialization</span>
-                <span>Capstone</span>
-              </div>
-            </div>
-
-            <div className="apple-device-panel bottom-8 left-7 w-[58%] p-5 md:left-10">
-              <p className="text-[10px] uppercase tracking-[0.16em] text-slate-500">Credential standard</p>
-              <p className="mt-2 text-sm font-medium text-white">Review before issuance</p>
-              <div className="mt-4 flex items-center gap-2 text-xs text-emerald-200/80">
-                <ShieldCheck size={14} />
-                Evidence-based completion
-              </div>
-            </div>
-
-            <div className="apple-device-panel bottom-8 right-7 w-[31%] p-5 text-center md:right-10">
-              <p className="text-3xl font-semibold tracking-[-0.05em] text-sky-300">4</p>
-              <p className="mt-1 text-[10px] uppercase tracking-[0.15em] text-slate-500">Program pathways</p>
             </div>
           </div>
         </div>

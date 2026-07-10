@@ -1,3 +1,11 @@
+export const EDITORIAL_ASSETS = {
+  hero: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:52b8779b-64c9-4a94-9501-f2fd2db32efc?size=1600",
+  openLearning: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:537b5534-efeb-4f27-bafe-c0e8d66d0f9c?size=1200",
+  professionalPrograms: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:5d8bdc43-a95c-4b11-b340-1d443c0638b9?size=1200",
+  assessmentCredentialing: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:5a63e66f-67fa-4900-bc62-61dacb5b78d1?size=1200",
+  institutionalTraining: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:a6e3ae8f-7d88-40a4-ac25-533de9dba49c?size=1200",
+};
+
 export const PROGRAM_PORTFOLIO = [
   {
     id: "open-learning",
@@ -19,6 +27,8 @@ export const PROGRAM_PORTFOLIO = [
     actionPath: "/waitlist",
     availability: "Phased launch",
     icon: "open-learning",
+    image: EDITORIAL_ASSETS.openLearning,
+    imageAlt: "Independent professional studying through Cognita Open Learning on a silver MacBook.",
   },
   {
     id: "professional-programs",
@@ -40,6 +50,8 @@ export const PROGRAM_PORTFOLIO = [
     actionPath: "/apply",
     availability: "Flagship program",
     icon: "professional-programs",
+    image: EDITORIAL_ASSETS.professionalPrograms,
+    imageAlt: "Facilitator leading a Cognita professional cohort using silver MacBook laptops.",
   },
   {
     id: "assessment-credentialing",
@@ -61,6 +73,8 @@ export const PROGRAM_PORTFOLIO = [
     actionPath: "/verify",
     availability: "Review-based service",
     icon: "assessment-credentialing",
+    image: EDITORIAL_ASSETS.assessmentCredentialing,
+    imageAlt: "Professional reviewer assessing learner evidence using a silver MacBook.",
   },
   {
     id: "institutional-training",
@@ -82,6 +96,8 @@ export const PROGRAM_PORTFOLIO = [
     actionPath: "/partner",
     availability: "By consultation",
     icon: "institutional-training",
+    image: EDITORIAL_ASSETS.institutionalTraining,
+    imageAlt: "Corporate team participating in a Cognita institutional workshop with silver MacBook laptops.",
   },
 ];
 

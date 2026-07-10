@@ -4,39 +4,44 @@ const SIZES = {
   sm: {
     title: "text-lg",
     subtitle: "text-[7px]",
-    dot: "w-1.5 h-1.5 -top-1.5",
-    line: "w-14",
-    gap: "mb-1",
+    dot: "h-1.5 w-1.5 -top-1.5",
+    subtitleMargin: "mt-1.5",
   },
   md: {
     title: "text-2xl md:text-3xl",
-    subtitle: "text-[9px] md:text-[10px]",
-    dot: "w-2 h-2 -top-2",
-    line: "w-24 md:w-28",
-    gap: "mb-1.5",
+    subtitle: "text-[8px] md:text-[9px]",
+    dot: "h-2 w-2 -top-2",
+    subtitleMargin: "mt-2",
   },
   lg: {
     title: "text-4xl md:text-6xl lg:text-7xl",
-    subtitle: "text-xs md:text-sm",
-    dot: "w-3 h-3 -top-3 md:w-3.5 md:h-3.5 md:-top-4",
-    line: "w-36 md:w-56",
-    gap: "mb-2 md:mb-3",
+    subtitle: "text-[10px] md:text-xs",
+    dot: "h-3 w-3 -top-3 md:h-3.5 md:w-3.5 md:-top-4",
+    subtitleMargin: "mt-3 md:mt-4",
   },
 };
 
 export default function BrandLockup({ size = "md", className = "" }) {
-  const s = SIZES[size] || SIZES.md;
+  const selectedSize = SIZES[size] || SIZES.md;
 
   return (
     <div className={`flex flex-col items-center ${className}`}>
       <div
-        className={`cognita-wordmark relative ${s.title} text-white leading-none drop-shadow-[0_0_16px_rgba(56,189,248,0.12)]`}
-        aria-label="Cognita Institute of AI"
+        className={`relative whitespace-nowrap font-display font-normal uppercase leading-none text-white ${selectedSize.title}`}
+        style={{ letterSpacing: "0.22em", paddingLeft: "0.22em" }}
+        aria-label="Cognita Institute of Artificial Intelligence"
       >
         COGN
         <span className="relative inline-block">
           <span
-            className={`absolute left-1/2 -translate-x-1/2 ${s.dot} rounded-full bg-sky-400 shadow-[0_0_14px_rgba(56,189,248,0.95)]`}
+            className={`absolute left-1/2 -translate-x-1/2 rounded-full bg-sky-300 ${selectedSize.dot}`}
+            style={{
+              boxShadow: "0 0 7px rgba(125,211,252,1), 0 0 18px rgba(56,189,248,0.8), 0 0 34px rgba(14,165,233,0.4)",
+            }}
+            aria-hidden="true"
+          />
+          <span
+            className="absolute left-1/2 top-[-1.15em] h-[0.9em] w-px -translate-x-1/2 bg-gradient-to-t from-sky-300/70 to-transparent"
             aria-hidden="true"
           />
           I
@@ -44,13 +49,11 @@ export default function BrandLockup({ size = "md", className = "" }) {
         TA
       </div>
 
-      <div
-        className={`${s.gap} h-px ${s.line} bg-gradient-to-r from-transparent via-sky-400/80 to-transparent shadow-[0_0_10px_rgba(56,189,248,0.45)]`}
-        aria-hidden="true"
-      />
-
-      <p className={`cognita-submark ${s.subtitle} text-white/72`}>
-        Institute of AI
+      <p
+        className={`font-display font-normal uppercase text-white/65 ${selectedSize.subtitle} ${selectedSize.subtitleMargin}`}
+        style={{ letterSpacing: "0.58em", paddingLeft: "0.58em" }}
+      >
+        Institute
       </p>
     </div>
   );
