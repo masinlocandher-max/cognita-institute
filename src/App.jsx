@@ -38,6 +38,7 @@ const AdminStudents = lazy(() => import('@/pages/admin/AdminStudents'));
 const AdminBatches = lazy(() => import('@/pages/admin/AdminBatches'));
 const AdminFacilitators = lazy(() => import('@/pages/admin/AdminFacilitators'));
 const AdminSubmissions = lazy(() => import('@/pages/admin/AdminSubmissions'));
+const AdminPortfolioAudits = lazy(() => import('@/pages/admin/AdminPortfolioAudits'));
 const AdminCertificates = lazy(() => import('@/pages/admin/AdminCertificates'));
 const AdminTracks = lazy(() => import('@/pages/admin/AdminTracks'));
 const AdminLessons = lazy(() => import('@/pages/admin/AdminLessons'));
@@ -128,6 +129,7 @@ const AuthenticatedApp = () => {
             <Route path="/dashboard/batches" element={<AdminBatches />} />
             <Route path="/dashboard/facilitators" element={<AdminFacilitators />} />
             <Route path="/dashboard/submissions" element={<AdminSubmissions />} />
+            <Route path="/dashboard/portfolio-audits" element={<AdminPortfolioAudits />} />
             <Route path="/dashboard/certificates" element={<AdminCertificates />} />
             <Route path="/dashboard/tracks" element={<AdminTracks />} />
             <Route path="/dashboard/lessons" element={<AdminLessons />} />
