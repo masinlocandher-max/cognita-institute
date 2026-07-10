@@ -1,1 +1,0 @@
-Static public assets for the Cognita Vite application.
