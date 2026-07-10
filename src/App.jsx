@@ -9,8 +9,6 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
-// Route-level code splitting keeps the landing page light and loads
-// dashboards and role-specific tools only when they are opened.
 const PublicLayout = lazy(() => import('@/components/public/PublicLayout'));
 const Home = lazy(() => import('@/pages/Home'));
 const About = lazy(() => import('@/pages/About'));
@@ -64,6 +62,8 @@ const StudentAnnouncements = lazy(() => import('@/pages/student/StudentAnnouncem
 const StudentMessages = lazy(() => import('@/pages/student/StudentMessages'));
 const StudentQuiz = lazy(() => import('@/pages/student/StudentQuiz'));
 const StudentEnrollmentAgreement = lazy(() => import('@/pages/student/StudentEnrollmentAgreement'));
+const StudentRegistrar = lazy(() => import('@/pages/student/StudentRegistrar'));
+const StudentLibrary = lazy(() => import('@/pages/student/StudentLibrary'));
 const FacilitatorOverview = lazy(() => import('@/pages/facilitator/FacilitatorOverview'));
 const FacilitatorStudents = lazy(() => import('@/pages/facilitator/FacilitatorStudents'));
 const FacilitatorSubmissions = lazy(() => import('@/pages/facilitator/FacilitatorSubmissions'));
@@ -87,89 +87,84 @@ const AuthenticatedApp = () => {
     );
   }
 
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    }
+  if (authError?.type === 'user_not_registered') {
+    return <UserNotRegisteredError />;
   }
 
   return (
     <Suspense fallback={<RouteLoadingFallback />}>
       <Routes>
-      {/* Public pages */}
-      <Route element={<PublicLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/program" element={<Program />} />
-        <Route path="/tracks" element={<Tracks />} />
-        <Route path="/faq" element={<Faq />} />
-        <Route path="/apply" element={<Apply />} />
-        <Route path="/verify" element={<Verify />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/partner" element={<Partner />} />
-        <Route path="/waitlist" element={<Waitlist />} />
-        <Route path="/teach" element={<Teach />} />
-      </Route>
-
-      {/* Auth pages */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-
-      {/* Protected: Admin */}
-      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-        <Route element={<AdminDashboardWrapper />}>
-          <Route path="/dashboard" element={<AdminOverview />} />
-          <Route path="/dashboard/analytics" element={<AdminAnalytics />} />
-          <Route path="/dashboard/applications" element={<AdminApplications />} />
-          <Route path="/dashboard/teacher-applications" element={<AdminTeacherApplications />} />
-          <Route path="/dashboard/students" element={<AdminStudents />} />
-          <Route path="/dashboard/batches" element={<AdminBatches />} />
-          <Route path="/dashboard/facilitators" element={<AdminFacilitators />} />
-          <Route path="/dashboard/submissions" element={<AdminSubmissions />} />
-          <Route path="/dashboard/certificates" element={<AdminCertificates />} />
-          <Route path="/dashboard/tracks" element={<AdminTracks />} />
-          <Route path="/dashboard/lessons" element={<AdminLessons />} />
-          <Route path="/dashboard/quizzes" element={<AdminQuizzes />} />
-          <Route path="/dashboard/announcements" element={<AdminAnnouncements />} />
-          <Route path="/dashboard/messages" element={<AdminMessages />} />
-          <Route path="/dashboard/playstore" element={<AdminPlayStore />} />
-          <Route path="/dashboard/payments" element={<AdminPayments />} />
-          <Route path="/dashboard/invoices" element={<AdminInvoices />} />
-          <Route path="/dashboard/receipts" element={<AdminReceipts />} />
-          <Route path="/dashboard/refunds" element={<AdminRefunds />} />
-          <Route path="/dashboard/partners" element={<AdminPartnerInquiries />} />
-          <Route path="/dashboard/leads" element={<AdminLeads />} />
-          <Route path="/dashboard/waitlist" element={<AdminWaitlist />} />
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/program" element={<Program />} />
+          <Route path="/tracks" element={<Tracks />} />
+          <Route path="/faq" element={<Faq />} />
+          <Route path="/apply" element={<Apply />} />
+          <Route path="/verify" element={<Verify />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/partner" element={<Partner />} />
+          <Route path="/waitlist" element={<Waitlist />} />
+          <Route path="/teach" element={<Teach />} />
         </Route>
 
-        {/* Protected: Facilitator */}
-        <Route element={<FacilitatorDashboardWrapper />}>
-          <Route path="/facilitator" element={<FacilitatorOverview />} />
-          <Route path="/facilitator/students" element={<FacilitatorStudents />} />
-          <Route path="/facilitator/submissions" element={<FacilitatorSubmissions />} />
-          <Route path="/facilitator/messages" element={<FacilitatorMessages />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+
+        <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+          <Route element={<AdminDashboardWrapper />}>
+            <Route path="/dashboard" element={<AdminOverview />} />
+            <Route path="/dashboard/analytics" element={<AdminAnalytics />} />
+            <Route path="/dashboard/applications" element={<AdminApplications />} />
+            <Route path="/dashboard/teacher-applications" element={<AdminTeacherApplications />} />
+            <Route path="/dashboard/students" element={<AdminStudents />} />
+            <Route path="/dashboard/batches" element={<AdminBatches />} />
+            <Route path="/dashboard/facilitators" element={<AdminFacilitators />} />
+            <Route path="/dashboard/submissions" element={<AdminSubmissions />} />
+            <Route path="/dashboard/certificates" element={<AdminCertificates />} />
+            <Route path="/dashboard/tracks" element={<AdminTracks />} />
+            <Route path="/dashboard/lessons" element={<AdminLessons />} />
+            <Route path="/dashboard/quizzes" element={<AdminQuizzes />} />
+            <Route path="/dashboard/announcements" element={<AdminAnnouncements />} />
+            <Route path="/dashboard/messages" element={<AdminMessages />} />
+            <Route path="/dashboard/playstore" element={<AdminPlayStore />} />
+            <Route path="/dashboard/payments" element={<AdminPayments />} />
+            <Route path="/dashboard/invoices" element={<AdminInvoices />} />
+            <Route path="/dashboard/receipts" element={<AdminReceipts />} />
+            <Route path="/dashboard/refunds" element={<AdminRefunds />} />
+            <Route path="/dashboard/partners" element={<AdminPartnerInquiries />} />
+            <Route path="/dashboard/leads" element={<AdminLeads />} />
+            <Route path="/dashboard/waitlist" element={<AdminWaitlist />} />
+          </Route>
+
+          <Route element={<FacilitatorDashboardWrapper />}>
+            <Route path="/facilitator" element={<FacilitatorOverview />} />
+            <Route path="/facilitator/students" element={<FacilitatorStudents />} />
+            <Route path="/facilitator/submissions" element={<FacilitatorSubmissions />} />
+            <Route path="/facilitator/messages" element={<FacilitatorMessages />} />
+          </Route>
+
+          <Route element={<StudentDashboardWrapper />}>
+            <Route path="/student" element={<StudentDashboard />} />
+            <Route path="/student/program" element={<StudentProgram />} />
+            <Route path="/student/lesson/:week" element={<StudentLesson />} />
+            <Route path="/student/portfolio" element={<StudentPortfolio />} />
+            <Route path="/student/certificate" element={<StudentCertificate />} />
+            <Route path="/student/registrar" element={<StudentRegistrar />} />
+            <Route path="/student/payments" element={<StudentPayments />} />
+            <Route path="/student/library" element={<StudentLibrary />} />
+            <Route path="/student/announcements" element={<StudentAnnouncements />} />
+            <Route path="/student/messages" element={<StudentMessages />} />
+            <Route path="/student/quiz/:week" element={<StudentQuiz />} />
+            <Route path="/student/enrollment-agreement" element={<StudentEnrollmentAgreement />} />
+          </Route>
         </Route>
 
-        {/* Protected: Student */}
-        <Route element={<StudentDashboardWrapper />}>
-          <Route path="/student" element={<StudentDashboard />} />
-          <Route path="/student/program" element={<StudentProgram />} />
-          <Route path="/student/lesson/:week" element={<StudentLesson />} />
-          <Route path="/student/portfolio" element={<StudentPortfolio />} />
-          <Route path="/student/certificate" element={<StudentCertificate />} />
-          <Route path="/student/payments" element={<StudentPayments />} />
-          <Route path="/student/announcements" element={<StudentAnnouncements />} />
-          <Route path="/student/messages" element={<StudentMessages />} />
-          <Route path="/student/quiz/:week" element={<StudentQuiz />} />
-          <Route path="/student/enrollment-agreement" element={<StudentEnrollmentAgreement />} />
-        </Route>
-      </Route>
-
-      <Route path="*" element={<PageNotFound />} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Suspense>
   );
