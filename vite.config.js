@@ -1,25 +1,25 @@
-import base44 from "@base44/vite-plugin"
-import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import base44 from "@base44/vite-plugin";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
-// GitHub Pages serves project sites from /<repository-name>/ instead of /.
-// Base44 and local development continue to use the root path.
 export default defineConfig(() => {
-  const isGitHubPages = process.env.GITHUB_PAGES === 'true';
+  const deployTarget = process.env.VITE_DEPLOY_TARGET;
+  const isLegacyProjectPages = deployTarget === "github-project-pages";
 
   return {
-    base: isGitHubPages ? '/cognita-institute/' : '/',
+    // Cognita now builds at the root path for thecognitainstitute.com.
+    // The legacy GitHub project-site target remains available for emergency fallback builds.
+    base: isLegacyProjectPages ? "/cognita-institute/" : "/",
     plugins: [
       base44({
-        // Support for legacy code that imports the base44 SDK with @/integrations, @/entities, etc.
-        // can be removed if the code has been updated to use the new SDK imports from @base44/sdk
-        legacySDKImports: process.env.BASE44_LEGACY_SDK_IMPORTS === 'true',
+        // Support for legacy code that imports the Base44 SDK with @/integrations, @/entities, etc.
+        legacySDKImports: process.env.BASE44_LEGACY_SDK_IMPORTS === "true",
         hmrNotifier: true,
         navigationNotifier: true,
         analyticsTracker: true,
-        visualEditAgent: true
+        visualEditAgent: true,
       }),
       react(),
-    ]
+    ],
   };
 });
