@@ -5,7 +5,7 @@ import BrandLockup from "@/components/BrandLockup";
 import RouteTransition from "@/components/RouteTransition";
 import {
   LayoutDashboard, Users, BookOpen, FileText, Award,
-  ClipboardList, LogOut, Menu, X,
+  ClipboardList, ClipboardCheck, LogOut, Menu, X,
   GraduationCap, UserCheck, DollarSign, Layers, BookMarked, ExternalLink, Smartphone,
   Receipt, RefreshCcw, Handshake, UserPlus, Clock, CreditCard,
   Megaphone, HelpCircle, MessageSquare, BarChart, Library, Landmark, LifeBuoy
@@ -23,6 +23,7 @@ const ADMIN_LINKS = [
   { section: "Academic Operations", label: "Quizzes", path: "/dashboard/quizzes", icon: HelpCircle },
   { section: "Academic Operations", label: "Facilitators", path: "/dashboard/facilitators", icon: UserCheck },
   { section: "Academic Operations", label: "Submissions", path: "/dashboard/submissions", icon: FileText },
+  { section: "Academic Operations", label: "Portfolio Audits", path: "/dashboard/portfolio-audits", icon: ClipboardCheck },
   { section: "Academic Operations", label: "Certificates", path: "/dashboard/certificates", icon: Award },
   { section: "Communications", label: "Announcements", path: "/dashboard/announcements", icon: Megaphone },
   { section: "Communications", label: "Messages", path: "/dashboard/messages", icon: MessageSquare },
