@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { ACTIVE_TRACKS } from "@/lib/curriculum";
-import { CheckCircle, Loader2 } from "lucide-react";
+import { CheckCircle, Loader2, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,43 +21,42 @@ export default function Apply() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
-  const [checkingEmail, setCheckingEmail] = useState(false);
 
-  const handleChange = (field, value) => setForm(f => ({ ...f, [field]: value }));
+  const handleChange = (field, value) => setForm((current) => ({ ...current, [field]: value }));
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setError("");
+
     if (!form.understands_no_auto_cert || !form.agrees_to_submit_weekly) {
-      setError("You must confirm both statements to proceed.");
+      setError("You must confirm both program statements to proceed.");
       return;
     }
+
     setSubmitting(true);
     try {
-      setCheckingEmail(true);
       const existing = await base44.entities.Application.filter({ email: form.email });
-      setCheckingEmail(false);
       if (existing.length > 0) {
-        const existingApp = existing[0];
-        if (existingApp.status === "Enrolled") {
-          setError("You are already enrolled as a student. Please sign in to access your dashboard.");
-        } else if (existingApp.status === "Accepted") {
+        const existingApplication = existing[0];
+        if (existingApplication.status === "Enrolled") {
+          setError("You are already enrolled. Please sign in to access your student portal.");
+        } else if (existingApplication.status === "Accepted") {
           setError("Your application has already been accepted. Please check your email for enrollment instructions.");
-        } else if (existingApp.status === "Rejected") {
-          setError("A previous application with this email was not accepted. Please contact us if you believe this is an error.");
+        } else if (existingApplication.status === "Rejected") {
+          setError("A previous application with this email was not accepted. Please contact the Admissions Office for clarification.");
         } else {
-          setError("You already have an application under review. Our admissions team will contact you soon.");
+          setError("You already have an application under review. The Admissions Office will contact you when a decision is available.");
         }
-        setSubmitting(false);
         return;
       }
+
       await base44.entities.Application.create({
         ...form,
         status: "Pending Review",
       });
       setSubmitted(true);
-    } catch (err) {
-      setError("Something went wrong. Please try again.");
+    } catch {
+      setError("The application could not be submitted. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -65,14 +64,15 @@ export default function Apply() {
 
   if (submitted) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center px-5 sm:px-6">
-        <div className="text-center max-w-md card-glow rounded-xl p-8">
-          <div className="w-16 h-16 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mx-auto mb-6">
-            <CheckCircle size={32} className="text-cyan-400" />
+      <div className="apple-surface flex min-h-[76vh] items-center justify-center px-5 py-24 sm:px-6">
+        <div className="apple-card max-w-lg p-8 text-center md:p-10">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-sky-300/15 bg-sky-300/[0.07]">
+            <CheckCircle size={30} className="text-sky-300" />
           </div>
-          <h1 className="text-2xl font-heading font-bold mb-3">Application Submitted</h1>
-          <p className="text-muted-foreground leading-relaxed">
-            Your application has been received. Cognita reviews applicants before enrollment. Our admissions team will contact you via email with a decision.
+          <p className="apple-eyebrow mt-7">Cognita Professional Programs</p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-white">Application submitted</h1>
+          <p className="mt-4 text-sm leading-7 text-slate-400">
+            Your application to the 10-Week Professional AI Program has been received. The Admissions Office reviews applications before enrollment and will send the decision by email.
           </p>
         </div>
       </div>
@@ -80,114 +80,139 @@ export default function Apply() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-5 sm:px-6 pt-20 pb-20">
-      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-400 mb-4">Application-Based Admission</p>
-      <h1 className="text-2xl md:text-4xl font-heading font-bold mb-3">Apply for the Next Cognita Batch</h1>
-      <p className="text-sm md:text-base text-muted-foreground mb-10">
-        Cognita reviews applicants before enrollment. Application does not guarantee acceptance.
-      </p>
+    <div className="apple-surface min-h-screen px-5 pb-24 pt-24 sm:px-6 md:pt-32">
+      <div className="mx-auto max-w-3xl">
+        <div className="mb-10 max-w-2xl">
+          <p className="apple-eyebrow">Cognita Professional Programs</p>
+          <h1 className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-white md:text-6xl">
+            Apply to the 10-Week Professional AI Program
+          </h1>
+          <p className="mt-5 text-base leading-7 text-slate-400 md:text-lg">
+            This is Cognita's guided cohort pathway. Applications are reviewed before enrollment because the program requires weekly output submission, facilitator feedback, and active participation.
+          </p>
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 card-glow rounded-xl p-6 md:p-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label className="text-xs text-muted-foreground mb-1.5">Full Name *</Label>
-            <Input required value={form.full_name} onChange={e => handleChange("full_name", e.target.value)} className="bg-secondary border-border" />
+        <div className="mb-6 flex items-start gap-3 rounded-2xl border border-sky-300/12 bg-sky-300/[0.04] p-5">
+          <ShieldCheck size={19} className="mt-0.5 flex-shrink-0 text-sky-300" />
+          <p className="text-sm leading-6 text-slate-300/80">
+            Applying does not guarantee acceptance. Cognita evaluates readiness, availability, goals, and the applicant's ability to complete the program requirements.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="apple-card space-y-7 p-6 md:p-9">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div>
+              <Label className="mb-2 text-xs text-slate-400">Full legal name *</Label>
+              <Input required value={form.full_name} onChange={(event) => handleChange("full_name", event.target.value)} className="border-white/10 bg-white/[0.035]" />
+            </div>
+            <div>
+              <Label className="mb-2 text-xs text-slate-400">Email address *</Label>
+              <Input required type="email" value={form.email} onChange={(event) => handleChange("email", event.target.value)} className="border-white/10 bg-white/[0.035]" />
+            </div>
+            <div>
+              <Label className="mb-2 text-xs text-slate-400">Phone number *</Label>
+              <Input required value={form.phone} onChange={(event) => handleChange("phone", event.target.value)} className="border-white/10 bg-white/[0.035]" />
+            </div>
+            <div>
+              <Label className="mb-2 text-xs text-slate-400">Location *</Label>
+              <Input required value={form.location} onChange={(event) => handleChange("location", event.target.value)} className="border-white/10 bg-white/[0.035]" />
+            </div>
           </div>
+
           <div>
-            <Label className="text-xs text-muted-foreground mb-1.5">Email *</Label>
-            <Input required type="email" value={form.email} onChange={e => handleChange("email", e.target.value)} className="bg-secondary border-border" />
+            <Label className="mb-2 text-xs text-slate-400">Preferred specialization track *</Label>
+            <Select value={form.preferred_track} onValueChange={(value) => handleChange("preferred_track", value)}>
+              <SelectTrigger className="border-white/10 bg-white/[0.035]">
+                <SelectValue placeholder="Select a track" />
+              </SelectTrigger>
+              <SelectContent>
+                {ACTIVE_TRACKS.map((track) => <SelectItem key={track} value={track}>{track}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
+
           <div>
-            <Label className="text-xs text-muted-foreground mb-1.5">Phone Number *</Label>
-            <Input required value={form.phone} onChange={e => handleChange("phone", e.target.value)} className="bg-secondary border-border" />
-          </div>
-          <div>
-            <Label className="text-xs text-muted-foreground mb-1.5">Location *</Label>
-            <Input required value={form.location} onChange={e => handleChange("location", e.target.value)} className="bg-secondary border-border" />
-          </div>
-        </div>
-
-        <div>
-          <Label className="text-xs text-muted-foreground mb-1.5">Preferred Track *</Label>
-          <Select value={form.preferred_track} onValueChange={v => handleChange("preferred_track", v)}>
-            <SelectTrigger className="bg-secondary border-border">
-              <SelectValue placeholder="Select a track" />
-            </SelectTrigger>
-            <SelectContent>
-              {ACTIVE_TRACKS.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label className="text-xs text-muted-foreground mb-1.5">Current Occupation or Student Status *</Label>
-          <Input required value={form.occupation} onChange={e => handleChange("occupation", e.target.value)} placeholder="e.g., Graphic designer, VA, College student" className="bg-secondary border-border" />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <Label className="text-xs text-muted-foreground mb-3 flex items-center justify-between">
-              <span>AI Skill Level</span>
-              <span className="text-cyan-400 font-mono">{form.ai_skill_level}/10</span>
-            </Label>
-            <Slider value={[form.ai_skill_level]} onValueChange={v => handleChange("ai_skill_level", v[0])} min={1} max={10} step={1} />
-          </div>
-          <div>
-            <Label className="text-xs text-muted-foreground mb-3 flex items-center justify-between">
-              <span>Tech Skill Level</span>
-              <span className="text-cyan-400 font-mono">{form.tech_skill_level}/10</span>
-            </Label>
-            <Slider value={[form.tech_skill_level]} onValueChange={v => handleChange("tech_skill_level", v[0])} min={1} max={10} step={1} />
-          </div>
-        </div>
-
-        <div>
-          <Label className="text-xs text-muted-foreground mb-3 flex items-center justify-between">
-            <span>Available Hours Per Week</span>
-            <span className="text-cyan-400 font-mono">{form.available_hours} hrs</span>
-          </Label>
-          <Slider value={[form.available_hours]} onValueChange={v => handleChange("available_hours", v[0])} min={1} max={40} step={1} />
-        </div>
-
-        <div>
-          <Label className="text-xs text-muted-foreground mb-1.5">Why do you want to join Cognita? *</Label>
-          <Textarea required value={form.why_apply} onChange={e => handleChange("why_apply", e.target.value)} rows={4} placeholder="Tell us why you want to join..." className="bg-secondary border-border" />
-        </div>
-
-        <div>
-          <Label className="text-xs text-muted-foreground mb-1.5">What do you want to produce after 10 weeks? *</Label>
-          <Textarea required value={form.production_goals} onChange={e => handleChange("production_goals", e.target.value)} rows={3} placeholder="Describe what you want to create or achieve..." className="bg-secondary border-border" />
-        </div>
-
-        <div className="space-y-3">
-          <div className="flex items-start gap-3 p-4 rounded-lg bg-secondary/50 border border-border/50">
-            <Checkbox
-              checked={form.understands_no_auto_cert}
-              onCheckedChange={v => handleChange("understands_no_auto_cert", v)}
-              className="mt-0.5"
+            <Label className="mb-2 text-xs text-slate-400">Current occupation or student status *</Label>
+            <Input
+              required
+              value={form.occupation}
+              onChange={(event) => handleChange("occupation", event.target.value)}
+              placeholder="Example: Graphic designer, virtual assistant, college student"
+              className="border-white/10 bg-white/[0.035]"
             />
-            <p className="text-sm text-muted-foreground">
-              I understand that certificates at Cognita are not automatic. They are issued only after all weekly outputs are submitted, reviewed, and passed.
-            </p>
           </div>
-          <div className="flex items-start gap-3 p-4 rounded-lg bg-secondary/50 border border-border/50">
-            <Checkbox
-              checked={form.agrees_to_submit_weekly}
-              onCheckedChange={v => handleChange("agrees_to_submit_weekly", v)}
-              className="mt-0.5"
+
+          <div className="grid grid-cols-1 gap-7 md:grid-cols-2">
+            <div>
+              <Label className="mb-4 flex items-center justify-between text-xs text-slate-400">
+                <span>Current AI skill level</span>
+                <span className="font-mono text-sky-300">{form.ai_skill_level}/10</span>
+              </Label>
+              <Slider value={[form.ai_skill_level]} onValueChange={(value) => handleChange("ai_skill_level", value[0])} min={1} max={10} step={1} />
+            </div>
+            <div>
+              <Label className="mb-4 flex items-center justify-between text-xs text-slate-400">
+                <span>Current technology skill level</span>
+                <span className="font-mono text-sky-300">{form.tech_skill_level}/10</span>
+              </Label>
+              <Slider value={[form.tech_skill_level]} onValueChange={(value) => handleChange("tech_skill_level", value[0])} min={1} max={10} step={1} />
+            </div>
+          </div>
+
+          <div>
+            <Label className="mb-4 flex items-center justify-between text-xs text-slate-400">
+              <span>Available study time each week</span>
+              <span className="font-mono text-sky-300">{form.available_hours} hours</span>
+            </Label>
+            <Slider value={[form.available_hours]} onValueChange={(value) => handleChange("available_hours", value[0])} min={1} max={40} step={1} />
+          </div>
+
+          <div>
+            <Label className="mb-2 text-xs text-slate-400">Why are you applying to this program? *</Label>
+            <Textarea
+              required
+              value={form.why_apply}
+              onChange={(event) => handleChange("why_apply", event.target.value)}
+              rows={5}
+              placeholder="Explain your motivation, current needs, and why guided training is appropriate for you."
+              className="border-white/10 bg-white/[0.035]"
             />
-            <p className="text-sm text-muted-foreground">
-              I agree to submit weekly outputs for 10 consecutive weeks. I understand that failure to submit may result in removal from the program.
-            </p>
           </div>
-        </div>
 
-        {error && <p className="text-sm text-destructive">{error}</p>}
+          <div>
+            <Label className="mb-2 text-xs text-slate-400">What do you want to produce after 10 weeks? *</Label>
+            <Textarea
+              required
+              value={form.production_goals}
+              onChange={(event) => handleChange("production_goals", event.target.value)}
+              rows={4}
+              placeholder="Describe the practical output, portfolio, workflow, or project you want to complete."
+              className="border-white/10 bg-white/[0.035]"
+            />
+          </div>
 
-        <Button type="submit" disabled={submitting} className="btn-glow w-full h-12 text-sm font-semibold border border-cyan-500/50 bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20">
-          {submitting ? <Loader2 size={16} className="animate-spin" /> : "SUBMIT APPLICATION"}
-        </Button>
-      </form>
+          <div className="space-y-3">
+            <div className="flex items-start gap-3 rounded-2xl border border-white/[0.075] bg-white/[0.025] p-4">
+              <Checkbox checked={form.understands_no_auto_cert} onCheckedChange={(value) => handleChange("understands_no_auto_cert", value)} className="mt-0.5" />
+              <p className="text-sm leading-6 text-slate-400">
+                I understand that the Certificate of Completion is not automatic. Eligibility depends on completing the required work and passing the final review.
+              </p>
+            </div>
+            <div className="flex items-start gap-3 rounded-2xl border border-white/[0.075] bg-white/[0.025] p-4">
+              <Checkbox checked={form.agrees_to_submit_weekly} onCheckedChange={(value) => handleChange("agrees_to_submit_weekly", value)} className="mt-0.5" />
+              <p className="text-sm leading-6 text-slate-400">
+                I understand that this is a guided cohort program and agree to complete weekly outputs during the 10-week training period.
+              </p>
+            </div>
+          </div>
+
+          {error && <p className="text-sm text-destructive">{error}</p>}
+
+          <Button type="submit" disabled={submitting} className="apple-button-primary h-12 w-full border-0 text-sm font-semibold text-slate-950 hover:text-slate-950">
+            {submitting ? <Loader2 size={17} className="animate-spin" /> : "Submit application"}
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }
