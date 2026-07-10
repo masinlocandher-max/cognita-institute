@@ -14,10 +14,21 @@ export const AuthProvider = ({ children }) => {
   const [authError, setAuthError] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [appPublicSettings, setAppPublicSettings] = useState(null);
+  const [backendAvailable, setBackendAvailable] = useState(Boolean(appParams.appId));
 
   useEffect(() => {
     checkAppState();
   }, []);
+
+  const finishPublicMode = (error = null) => {
+    setAppPublicSettings({ public_site_available: true, backend_available: false });
+    setBackendAvailable(false);
+    setIsAuthenticated(false);
+    setAuthChecked(true);
+    setIsLoadingAuth(false);
+    setIsLoadingPublicSettings(false);
+    setAuthError(error);
+  };
 
   const persistPendingConsent = async (currentUser) => {
     if (typeof window === 'undefined') return;
@@ -33,58 +44,58 @@ export const AuthProvider = ({ children }) => {
       });
       window.sessionStorage.removeItem(PENDING_CONSENT_KEY);
     } catch (error) {
-      // Authentication must not fail because consent storage is temporarily unavailable.
       console.error('Consent record could not be persisted:', error);
     }
   };
 
   const checkAppState = async () => {
+    setIsLoadingPublicSettings(true);
+    setAuthError(null);
+
+    // The institutional website must remain available even when the Base44
+    // production configuration has not yet been added to GitHub Pages.
+    if (!appParams.appId) {
+      finishPublicMode({
+        type: 'backend_not_configured',
+        message: 'The public website is available while applicant services are being configured.',
+      });
+      return;
+    }
+
     try {
-      setIsLoadingPublicSettings(true);
-      setAuthError(null);
+      const publicApiBase = appParams.appBaseUrl
+        ? `${appParams.appBaseUrl.replace(/\/$/, '')}/api/apps/public`
+        : '/api/apps/public';
 
       const appClient = createAxiosClient({
-        baseURL: `/api/apps/public`,
+        baseURL: publicApiBase,
         headers: { 'X-App-Id': appParams.appId },
         token: appParams.token,
-        interceptResponses: true
+        interceptResponses: true,
       });
 
-      try {
-        const publicSettings = await appClient.get(`/prod/public-settings/by-id/${appParams.appId}`);
-        setAppPublicSettings(publicSettings);
+      const publicSettings = await appClient.get(`/prod/public-settings/by-id/${appParams.appId}`);
+      setAppPublicSettings(publicSettings);
+      setBackendAvailable(true);
 
-        if (appParams.token) {
-          await checkUserAuth();
-        } else {
-          setIsLoadingAuth(false);
-          setIsAuthenticated(false);
-          setAuthChecked(true);
-        }
-        setIsLoadingPublicSettings(false);
-      } catch (appError) {
-        console.error('App state check failed:', appError);
-
-        if (appError.status === 403 && appError.data?.extra_data?.reason) {
-          const reason = appError.data.extra_data.reason;
-          if (reason === 'auth_required') {
-            setAuthError({ type: 'auth_required', message: 'Authentication required' });
-          } else if (reason === 'user_not_registered') {
-            setAuthError({ type: 'user_not_registered', message: 'User not registered for this app' });
-          } else {
-            setAuthError({ type: reason, message: appError.message });
-          }
-        } else {
-          setAuthError({ type: 'unknown', message: appError.message || 'Failed to load app' });
-        }
-        setIsLoadingPublicSettings(false);
+      if (appParams.token) {
+        await checkUserAuth();
+      } else {
         setIsLoadingAuth(false);
+        setIsAuthenticated(false);
+        setAuthChecked(true);
       }
-    } catch (error) {
-      console.error('Unexpected error:', error);
-      setAuthError({ type: 'unknown', message: error.message || 'An unexpected error occurred' });
       setIsLoadingPublicSettings(false);
-      setIsLoadingAuth(false);
+    } catch (appError) {
+      console.error('Base44 app-state check failed:', appError);
+
+      // A backend outage or incomplete configuration must not blank the public
+      // institutional website. Protected services remain unavailable until the
+      // backend is reachable again.
+      finishPublicMode({
+        type: 'backend_unavailable',
+        message: 'Applicant and account services are temporarily unavailable. The public website remains accessible.',
+      });
     }
   };
 
@@ -94,6 +105,7 @@ export const AuthProvider = ({ children }) => {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
       setIsAuthenticated(true);
+      setBackendAvailable(true);
       setAuthError(null);
       await persistPendingConsent(currentUser);
       setIsLoadingAuth(false);
@@ -106,6 +118,8 @@ export const AuthProvider = ({ children }) => {
 
       if (error.status === 401 || error.status === 403) {
         setAuthError({ type: 'auth_required', message: 'Authentication required' });
+      } else {
+        setAuthError({ type: 'backend_unavailable', message: 'Account services are temporarily unavailable.' });
       }
     }
   };
@@ -134,10 +148,11 @@ export const AuthProvider = ({ children }) => {
       authError,
       appPublicSettings,
       authChecked,
+      backendAvailable,
       logout,
       navigateToLogin,
       checkUserAuth,
-      checkAppState
+      checkAppState,
     }}>
       {children}
     </AuthContext.Provider>

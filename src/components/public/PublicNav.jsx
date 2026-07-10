@@ -55,7 +55,7 @@ export default function PublicNav() {
             to="/apply"
             className="apple-button-primary px-5 py-2 text-sm font-semibold"
           >
-            Apply
+            Join Waitlist
           </Link>
         </div>
 
@@ -99,7 +99,7 @@ export default function PublicNav() {
                 onClick={() => setOpen(false)}
                 className="apple-button-primary px-4 py-3 text-center text-sm font-semibold"
               >
-                Apply
+                Join Waitlist
               </Link>
             </div>
           </div>
