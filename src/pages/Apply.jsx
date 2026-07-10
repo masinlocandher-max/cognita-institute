@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ACTIVE_TRACKS } from "@/lib/curriculum";
-import { CheckCircle, Loader2, ShieldCheck } from "lucide-react";
+import { CheckCircle, Loader2, ShieldCheck, Clock3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,9 +10,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
-import { OFFICIAL_DOMAIN, POLICY_VERSIONS } from "@/lib/governance";
+import { useAuth } from "@/lib/AuthContext";
+import { OFFICIAL_EMAILS } from "@/lib/governance";
 
 export default function Apply() {
+  const { backendAvailable } = useAuth();
   const [form, setForm] = useState({
     full_name: "", email: "", phone: "", location: "",
     preferred_track: "", occupation: "",
@@ -26,6 +28,17 @@ export default function Apply() {
   const [error, setError] = useState("");
 
   const handleChange = (field, value) => setForm((current) => ({ ...current, [field]: value }));
+
+  const buildInterestSummary = () => [
+    `Location: ${form.location}`,
+    `Occupation or student status: ${form.occupation}`,
+    `Current AI skill: ${form.ai_skill_level}/10`,
+    `Current technology skill: ${form.tech_skill_level}/10`,
+    `Available study time: ${form.available_hours} hours per week`,
+    `Reason for applying: ${form.why_apply}`,
+    `Expected 10-week output: ${form.production_goals}`,
+    "Applicant understands that completion and credentialing require human-reviewed work and are not automatic.",
+  ].join("\n\n");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -42,20 +55,41 @@ export default function Apply() {
     }
 
     setSubmitting(true);
+    const email = form.email.trim().toLowerCase();
+    const interestSummary = buildInterestSummary();
+
     try {
-      await base44.entities.Application.create({
-        ...form,
-        email: form.email.trim().toLowerCase(),
-        status: "Pending Review",
-        terms_version: POLICY_VERSIONS.terms,
-        privacy_version: POLICY_VERSIONS.privacy,
-        submitted_at: new Date().toISOString(),
-        source_domain: OFFICIAL_DOMAIN,
-      });
+      try {
+        await base44.entities.Waitlist.create({
+          full_name: form.full_name.trim(),
+          email,
+          phone: form.phone.trim(),
+          preferred_track: form.preferred_track,
+          reason_for_interest: interestSummary,
+          preferred_batch: "Next available Cognita Professional Program cohort",
+          status: "New",
+        });
+      } catch {
+        // Preserve applicant intake on installations where the existing Lead
+        // entity is available before Waitlist synchronization is completed.
+        await base44.entities.Lead.create({
+          full_name: form.full_name.trim(),
+          email,
+          phone: form.phone.trim(),
+          interest_type: "Join Waitlist",
+          preferred_track: form.preferred_track,
+          message: interestSummary,
+          source_page: "Professional Program Application Waitlist",
+          status: "New",
+        });
+      }
+
       setSubmitted(true);
-    } catch {
-      // Keep the public response neutral. Do not reveal whether an email already has an application.
-      setError("The application could not be submitted. Please check the form and try again, or contact Cognita support.");
+    } catch (submissionError) {
+      setError(
+        submissionError?.message ||
+        `Applicant intake is temporarily unavailable. Please email ${OFFICIAL_EMAILS.admissions} with the subject “Cognita Waitlist Application.”`
+      );
     } finally {
       setSubmitting(false);
     }
@@ -69,12 +103,12 @@ export default function Apply() {
             <CheckCircle size={30} className="text-sky-300" />
           </div>
           <p className="apple-eyebrow mt-7">Cognita Professional Programs</p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-white">Application submitted</h1>
+          <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-white">Application received</h1>
           <p className="mt-4 text-sm leading-7 text-slate-400">
-            Your application to the 10-Week Professional AI Program has been recorded. The Admissions Office reviews applications before enrollment and will send a decision through the contact information you provided.
+            Your application has been recorded and placed on the Cognita launch waitlist. Admissions will contact applicants in order of program readiness, track capacity, and available cohort schedules.
           </p>
           <p className="mt-4 text-xs leading-6 text-slate-500">
-            For privacy, Cognita does not display admissions status from an unauthenticated public form.
+            Being placed on the waitlist is not yet an enrollment offer, payment request, or guarantee of admission.
           </p>
         </div>
       </div>
@@ -87,10 +121,17 @@ export default function Apply() {
         <div className="mb-10 max-w-2xl">
           <p className="apple-eyebrow">Cognita Professional Programs</p>
           <h1 className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-white md:text-6xl">
-            Apply to the 10-Week Professional AI Program
+            Apply for the launch waitlist
           </h1>
           <p className="mt-5 text-base leading-7 text-slate-400 md:text-lg">
-            This is Cognita&apos;s guided cohort pathway. Applications are reviewed before enrollment because the program requires weekly output submission, facilitator feedback, portfolio development, and active participation.
+            Cognita is accepting applications while final learner operations are being prepared. Every complete application is placed on the waitlist for the next available 10-Week Professional AI Program cohort.
+          </p>
+        </div>
+
+        <div className="mb-6 flex items-start gap-3 rounded-2xl border border-amber-300/15 bg-amber-300/[0.045] p-5">
+          <Clock3 size={19} className="mt-0.5 flex-shrink-0 text-amber-200" />
+          <p className="text-sm leading-6 text-slate-300/85">
+            Applications are open, but enrollment and payment are not yet automatic. Cognita will contact waitlisted applicants only when the relevant cohort, learner support, and human-review capacity are ready.
           </p>
         </div>
 
@@ -100,6 +141,12 @@ export default function Apply() {
             Applying does not guarantee acceptance. Certificates are not automatic. Final portfolio approval and credential authorization are human decisions.
           </p>
         </div>
+
+        {!backendAvailable && (
+          <div className="mb-6 rounded-2xl border border-orange-300/15 bg-orange-300/[0.04] p-5 text-sm leading-6 text-slate-300/85">
+            The public website is available, but the applicant database connection is still being finalized. You may complete the form; if submission fails, email <a href={`mailto:${OFFICIAL_EMAILS.admissions}?subject=Cognita%20Waitlist%20Application`} className="text-sky-300 hover:underline">{OFFICIAL_EMAILS.admissions}</a>.
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="apple-card space-y-7 p-6 md:p-9">
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -163,7 +210,7 @@ export default function Apply() {
           <div className="space-y-3">
             {[
               ["understands_no_auto_cert", "I understand that the Certificate of Completion is not automatic. Eligibility depends on completing the required work and passing a final human portfolio review."],
-              ["agrees_to_submit_weekly", "I understand that this guided program requires weekly outputs and revisions when requested."],
+              ["agrees_to_submit_weekly", "I understand that the guided program requires weekly outputs and revisions when requested."],
             ].map(([field, text]) => (
               <div key={field} className="flex items-start gap-3 rounded-2xl border border-white/[0.075] bg-white/[0.025] p-4">
                 <Checkbox checked={form[field]} onCheckedChange={(value) => handleChange(field, value === true)} className="mt-0.5" />
@@ -183,7 +230,7 @@ export default function Apply() {
           {error && <p className="text-sm text-destructive">{error}</p>}
 
           <Button type="submit" disabled={submitting} className="apple-button-primary h-12 w-full border-0 text-sm font-semibold text-slate-950 hover:text-slate-950">
-            {submitting ? <Loader2 size={17} className="animate-spin" /> : "Submit application"}
+            {submitting ? <Loader2 size={17} className="animate-spin" /> : "Submit application to waitlist"}
           </Button>
         </form>
       </div>
