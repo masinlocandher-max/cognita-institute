@@ -117,7 +117,7 @@ export default function StudentRegistrar() {
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <section className="corporate-panel rounded-xl p-5 md:p-6">
           <div className="flex items-center gap-3 mb-5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-sky-400/20 bg-sky-400/8">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-sky-400/20 bg-sky-400/10">
               <FileCheck2 size={18} className="text-sky-300" />
             </div>
             <div>
@@ -147,7 +147,7 @@ export default function StudentRegistrar() {
 
         <section className="corporate-panel rounded-xl p-5 md:p-6">
           <div className="flex items-center gap-3 mb-5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-sky-400/20 bg-sky-400/8">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-sky-400/20 bg-sky-400/10">
               <Award size={18} className="text-sky-300" />
             </div>
             <div>
