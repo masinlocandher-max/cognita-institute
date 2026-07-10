@@ -1,0 +1,66 @@
+{
+  "name": "Lesson",
+  "type": "object",
+  "properties": {
+    "week_number": {
+      "type": "number"
+    },
+    "track": {
+      "type": "string",
+      "description": "null or empty for foundation lessons shared across all tracks"
+    },
+    "title": {
+      "type": "string"
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "AI Foundation",
+        "Specialization Track",
+        "Final Review"
+      ]
+    },
+    "learning_objective": {
+      "type": "string"
+    },
+    "lesson_overview": {
+      "type": "string"
+    },
+    "core_concepts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "practical_activity": {
+      "type": "string"
+    },
+    "required_output": {
+      "type": "string"
+    },
+    "submission_instructions": {
+      "type": "string"
+    },
+    "rubric_pass": {
+      "type": "string"
+    },
+    "rubric_needs_revision": {
+      "type": "string"
+    },
+    "rubric_failed": {
+      "type": "string"
+    },
+    "portfolio_category": {
+      "type": "string"
+    },
+    "is_locked": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "week_number",
+    "title",
+    "phase"
+  ]
+}
