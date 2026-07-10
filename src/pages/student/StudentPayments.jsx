@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { AlertCircle, CheckCircle, CreditCard, FileText, Loader2, LockKeyhole, ShieldCheck } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { Loader2, FileText, CheckCircle, AlertCircle, ShieldCheck, CreditCard } from "lucide-react";
+import EmptyState from "@/components/curriculum/EmptyState";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,269 +9,180 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { PAYMENT_METHODS, formatCurrency } from "@/lib/business-utils";
-import EmptyState from "@/components/curriculum/EmptyState";
+
+const PAYMENT_ACCESS_STATUSES = new Set(["Payment Confirmed", "Payment Waived"]);
 
 export default function StudentPayments() {
   const [student, setStudent] = useState(null);
-  const [application, setApplication] = useState(null);
   const [payments, setPayments] = useState([]);
   const [invoices, setInvoices] = useState([]);
   const [receipts, setReceipts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [paymentForm, setPaymentForm] = useState({ payment_method: "Bank Transfer", payment_reference: "" });
-  const [proofUrl, setProofUrl] = useState(null);
   const { toast } = useToast();
 
   const load = async () => {
-    const user = await base44.auth.me();
-
-    // Check for student record
-    const students = await base44.entities.Student.filter({ email: user.email });
-    if (students.length > 0) {
-      const s = students[0];
-      setStudent(s);
-      const [pays, invs, recs] = await Promise.all([
-        base44.entities.Payment.filter({ student_id: s.id }),
-        base44.entities.Invoice.filter({ student_id: s.id }),
-        base44.entities.Receipt.filter({ student_id: s.id }),
+    try {
+      const user = await base44.auth.me();
+      const students = await base44.entities.Student.filter({ email: user.email });
+      if (students.length === 0) return;
+      const currentStudent = students[0];
+      setStudent(currentStudent);
+      const [paymentData, invoiceData, receiptData] = await Promise.all([
+        base44.entities.Payment.filter({ student_id: currentStudent.id }),
+        base44.entities.Invoice.filter({ student_id: currentStudent.id }),
+        base44.entities.Receipt.filter({ student_id: currentStudent.id }),
       ]);
-      setPayments(pays);
-      setInvoices(invs);
-      setReceipts(recs);
-    } else {
-      // Check for accepted application
-      const apps = await base44.entities.Application.filter({ email: user.email });
-      const accepted = apps.find(a => a.status === "Accepted" || a.status === "Enrolled");
-      if (accepted) {
-        setApplication(accepted);
-        const [pays, invs] = await Promise.all([
-          base44.entities.Payment.filter({ student_email: user.email }),
-          base44.entities.Invoice.filter({ student_email: user.email }),
-        ]);
-        setPayments(pays);
-        setInvoices(invs);
-        const recs = accepted.status === "Enrolled" ? await base44.entities.Receipt.filter({ student_email: user.email }) : [];
-        setReceipts(recs);
-      }
+      setPayments(paymentData);
+      setInvoices(invoiceData);
+      setReceipts(receiptData);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => { load(); }, []);
 
-  const handleUploadProof = async (paymentId, file) => {
-    if (!file) return;
+  const uploadPaymentProof = async (payment, file) => {
+    if (!file || !paymentForm.payment_reference.trim()) return;
     setUploading(true);
     try {
       const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
-      await base44.entities.Payment.update(paymentId, {
+      await base44.entities.Payment.update(payment.id, {
         payment_proof_url: file_uri,
         payment_status: "Payment Submitted",
         date_submitted: new Date().toISOString(),
         payment_method: paymentForm.payment_method,
-        payment_reference: paymentForm.payment_reference,
+        payment_reference: paymentForm.payment_reference.trim(),
       });
-      toast({ title: "Payment proof uploaded", description: "An admin will review your payment shortly." });
+      toast({ title: "Payment proof submitted", description: "Learning access remains locked until an authorized finance reviewer confirms or waives the payment." });
       setPaymentForm({ payment_method: "Bank Transfer", payment_reference: "" });
-      setProofUrl(null);
-      load();
-    } catch (err) {
-      toast({ title: "Upload failed", description: err.message, variant: "destructive" });
+      await load();
+    } catch (error) {
+      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
   };
 
-  const viewProof = async (fileUri) => {
+  const openPrivateProof = async (fileUri) => {
     try {
       const { signed_url } = await base44.integrations.Core.CreateFileSignedUrl({ file_uri: fileUri, expires_in: 300 });
-      window.open(signed_url, "_blank");
-    } catch (err) {
-      toast({ title: "Could not load file", description: err.message, variant: "destructive" });
+      window.open(signed_url, "_blank", "noopener,noreferrer");
+    } catch (error) {
+      toast({ title: "Could not open payment proof", description: error.message, variant: "destructive" });
     }
   };
 
   if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="animate-spin text-muted-foreground" size={24} /></div>;
+  if (!student) return <EmptyState icon={AlertCircle} title="No enrollment record" description="Your finance and enrollment records will appear after the Admissions Office creates your student enrollment." />;
 
-  // Don't show payment section to rejected applicants
-  if (!student && !application) {
-    return (
-      <EmptyState
-        icon={AlertCircle}
-        title="No payment records"
-        description="Payment records become available after your application is accepted."
-      />
-    );
-  }
-
-  const name = student?.full_name || application?.full_name || "Student";
-  const track = student?.track || application?.preferred_track || "";
-
-  // Enrollment checklist
+  const paymentAccessAllowed = PAYMENT_ACCESS_STATUSES.has(student.payment_status) || payments.some((payment) => PAYMENT_ACCESS_STATUSES.has(payment.payment_status));
+  const pendingPayment = payments.find((payment) => ["Payment Pending", "Payment Submitted", "Payment Failed", "Balance Due"].includes(payment.payment_status));
+  const confirmedReceipt = receipts.find((receipt) => receipt.payment_status !== "Revoked") || receipts[0];
   const checklist = [
-    { label: "Application submitted", done: true },
-    { label: "Application accepted", done: !!application || !!student },
-    { label: "Enrollment agreement", done: student?.enrollment_agreement_signed || !!student },
-    { label: "Payment confirmed", done: student?.payment_status === "Payment Confirmed" || student?.payment_status === "Payment Waived" || payments.some(p => p.payment_status === "Payment Confirmed" || p.payment_status === "Payment Waived") },
-    { label: "Enrolled in batch", done: !!student },
+    { label: "Enrollment record created", done: true },
+    { label: "Enrollment agreement signed", done: student.enrollment_agreement_signed === true },
+    { label: "Payment confirmed or formally waived", done: paymentAccessAllowed },
+    { label: "Learning access available", done: student.enrollment_agreement_signed === true && paymentAccessAllowed && !["Suspended", "Expired", "Revoked"].includes(student.access_status) },
   ];
-
-  const pendingPayment = payments.find(p => ["Payment Pending", "Payment Submitted", "Payment Failed", "Balance Due"].includes(p.payment_status));
-  const confirmedReceipt = receipts[0];
 
   return (
     <div>
-      <h1 className="text-xl md:text-2xl font-heading font-bold mb-1">Payments & Enrollment</h1>
-      <p className="text-xs text-muted-foreground mb-6">{name} · {track}</p>
+      <h1 className="text-xl font-bold md:text-2xl">Finance and Enrollment</h1>
+      <p className="mb-6 mt-1 text-xs text-muted-foreground">{student.full_name} · {student.track}</p>
 
-      {/* Enrollment checklist */}
-      <div className="rounded-xl border border-border/50 bg-card p-5 mb-6">
-        <h2 className="text-sm font-semibold mb-4">Enrollment Checklist</h2>
+      {!paymentAccessAllowed && (
+        <div className="mb-6 rounded-xl border border-amber-500/20 bg-amber-500/5 p-5">
+          <div className="flex items-start gap-3">
+            <LockKeyhole size={19} className="mt-0.5 flex-shrink-0 text-amber-400" />
+            <div>
+              <p className="text-sm font-semibold text-amber-300">Learning access is not active yet</p>
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">Submitting payment proof does not automatically unlock lessons. An authorized finance reviewer must confirm the payment or record an approved waiver.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="mb-6 rounded-xl border border-border/50 bg-card p-5">
+        <h2 className="mb-4 text-sm font-semibold">Enrollment Checklist</h2>
         <div className="space-y-3">
-          {checklist.map((item, i) => (
-            <div key={i} className="flex items-center gap-3">
-              {item.done ? <CheckCircle size={16} className="text-emerald-400" /> : <div className="w-4 h-4 rounded-full border border-muted-foreground/30" />}
+          {checklist.map((item) => (
+            <div key={item.label} className="flex items-center gap-3">
+              {item.done ? <CheckCircle size={16} className="text-emerald-400" /> : <span className="h-4 w-4 rounded-full border border-muted-foreground/30" />}
               <span className={`text-sm ${item.done ? "text-foreground" : "text-muted-foreground"}`}>{item.label}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Invoice */}
-      {invoices.length > 0 && (
-        <div className="rounded-xl border border-border/50 bg-card p-5 mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <FileText size={16} className="text-cyan-400" />
-            <h2 className="text-sm font-semibold">Invoice</h2>
-          </div>
-          {invoices.map(inv => (
-            <div key={inv.id} className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Invoice Number</span>
-                <span className="font-mono text-xs">{inv.invoice_number}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Tuition</span>
-                <span className="font-mono">{formatCurrency(inv.tuition_fee)}</span>
-              </div>
-              {inv.discount_amount > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Discount ({inv.discount_type})</span>
-                  <span className="font-mono text-purple-400">-{formatCurrency(inv.discount_amount)}</span>
-                </div>
-              )}
-              <div className="flex justify-between text-sm border-t border-border/30 pt-2">
-                <span className="font-semibold">Total Due</span>
-                <span className="font-mono font-bold">{formatCurrency(inv.total_amount_due)}</span>
-              </div>
-              {inv.due_date && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Due Date</span>
-                  <span>{inv.due_date}</span>
-                </div>
-              )}
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Status</span>
-                <StatusBadge status={inv.payment_status} />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Payment instructions + proof upload */}
-      {pendingPayment && (
-        <div className="rounded-xl border border-border/50 bg-card p-5 mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <CreditCard size={16} className="text-cyan-400" />
-            <h2 className="text-sm font-semibold">Payment Instructions</h2>
-          </div>
-
-          {pendingPayment.payment_status === "Payment Submitted" ? (
-            <div className="p-3 rounded-lg border border-yellow-500/20 bg-yellow-500/5 text-sm text-yellow-400">
-              Your payment proof has been submitted and is pending admin review. You will be notified once confirmed.
-            </div>
-          ) : (
-            <>
-              <div className="p-3 rounded-lg bg-secondary/30 border border-border/30 mb-4 text-sm">
-                <p className="text-muted-foreground mb-2">Amount Due: <span className="font-mono font-bold text-foreground">{formatCurrency(pendingPayment.amount_due)}</span></p>
-                <p className="text-xs text-muted-foreground">Please make your payment via bank transfer or GCash, then upload your payment proof below.</p>
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <Label className="text-xs text-muted-foreground mb-1.5">Payment Method</Label>
-                  <Select value={paymentForm.payment_method} onValueChange={v => setPaymentForm(f => ({ ...f, payment_method: v }))}>
-                    <SelectTrigger className="bg-secondary border-border"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {PAYMENT_METHODS.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground mb-1.5">Payment Reference Number</Label>
-                  <Input value={paymentForm.payment_reference} onChange={e => setPaymentForm(f => ({ ...f, payment_reference: e.target.value }))} placeholder="Transaction ID / Reference No." className="bg-secondary border-border" />
-                </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground mb-1.5">Upload Payment Proof</Label>
-                  <input
-                    type="file"
-                    accept="image/*,application/pdf"
-                    onChange={e => handleUploadProof(pendingPayment.id, e.target.files?.[0])}
-                    disabled={uploading || !paymentForm.payment_reference}
-                    className="block w-full text-sm text-muted-foreground file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-cyan-500/10 file:text-cyan-400 file:text-xs file:font-medium hover:file:bg-cyan-500/20 cursor-pointer disabled:opacity-40"
-                  />
-                  {uploading && <p className="text-xs text-muted-foreground mt-1"><Loader2 size={12} className="animate-spin inline mr-1" /> Uploading...</p>}
-                </div>
-              </div>
-            </>
-          )}
-
-          {pendingPayment.payment_proof_url && (
-            <div className="mt-4">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-2">Uploaded Proof</p>
-              <Button size="sm" variant="outline" onClick={() => viewProof(pendingPayment.payment_proof_url)} className="text-xs border-border">
-                <FileText size={12} className="mr-1" /> View Payment Proof
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Receipt / Payment Confirmation Record */}
-      {confirmedReceipt ? (
-        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5 mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <ShieldCheck size={16} className="text-emerald-400" />
-            <h2 className="text-sm font-semibold text-emerald-400">Payment Confirmation Record</h2>
-          </div>
+      {invoices.map((invoice) => (
+        <div key={invoice.id} className="mb-6 rounded-xl border border-border/50 bg-card p-5">
+          <div className="mb-4 flex items-center gap-2"><FileText size={16} className="text-cyan-400" /><h2 className="text-sm font-semibold">Invoice {invoice.invoice_number}</h2></div>
           <div className="space-y-2 text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Receipt Number</span><span className="font-mono text-xs">{confirmedReceipt.receipt_number}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Amount Paid</span><span className="font-mono font-bold text-emerald-400">{formatCurrency(confirmedReceipt.amount_paid)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Payment Method</span><span>{confirmedReceipt.payment_method}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Date Paid</span><span>{confirmedReceipt.date_paid}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Confirmed By</span><span>{confirmedReceipt.confirmed_by}</span></div>
+            <div className="flex justify-between gap-4"><span className="text-muted-foreground">Tuition or service fee</span><span className="font-mono">{formatCurrency(invoice.tuition_fee)}</span></div>
+            {invoice.discount_amount > 0 && <div className="flex justify-between gap-4"><span className="text-muted-foreground">Discount ({invoice.discount_type})</span><span className="font-mono text-purple-400">-{formatCurrency(invoice.discount_amount)}</span></div>}
+            <div className="flex justify-between gap-4 border-t border-border/30 pt-2"><span className="font-semibold">Total due</span><span className="font-mono font-bold">{formatCurrency(invoice.total_amount_due)}</span></div>
+            {invoice.due_date && <div className="flex justify-between gap-4"><span className="text-muted-foreground">Due date</span><span>{invoice.due_date}</span></div>}
+            <div className="flex justify-between gap-4"><span className="text-muted-foreground">Status</span><StatusBadge status={invoice.payment_status} /></div>
           </div>
         </div>
-      ) : !pendingPayment && invoices.length === 0 && (
-        <EmptyState
-          icon={CreditCard}
-          title="No payment records yet"
-          description="Your invoice and payment instructions will appear here once your application is accepted and an invoice is created."
-        />
+      ))}
+
+      {pendingPayment && (
+        <div className="mb-6 rounded-xl border border-border/50 bg-card p-5">
+          <div className="mb-4 flex items-center gap-2"><CreditCard size={16} className="text-cyan-400" /><h2 className="text-sm font-semibold">Payment Record</h2></div>
+          {pendingPayment.payment_status === "Payment Submitted" ? (
+            <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-3 text-sm text-yellow-400">Payment proof is awaiting authorized review. Keep your reference number and do not submit duplicate payments unless instructed.</div>
+          ) : (
+            <div className="space-y-4">
+              <div className="rounded-lg border border-border/30 bg-secondary/30 p-3 text-sm">
+                <p className="mb-2 text-muted-foreground">Amount due: <span className="font-mono font-bold text-foreground">{formatCurrency(pendingPayment.amount_due)}</span></p>
+                <p className="text-xs text-muted-foreground">Use only the official payment instructions included with your invoice or enrollment communication.</p>
+              </div>
+              <div>
+                <Label className="mb-1.5 text-xs text-muted-foreground">Payment method</Label>
+                <Select value={paymentForm.payment_method} onValueChange={(value) => setPaymentForm((current) => ({ ...current, payment_method: value }))}>
+                  <SelectTrigger className="border-border bg-secondary"><SelectValue /></SelectTrigger>
+                  <SelectContent>{PAYMENT_METHODS.map((method) => <SelectItem key={method} value={method}>{method}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="mb-1.5 text-xs text-muted-foreground">Transaction reference *</Label>
+                <Input value={paymentForm.payment_reference} onChange={(event) => setPaymentForm((current) => ({ ...current, payment_reference: event.target.value }))} placeholder="Transaction ID or reference number" className="border-border bg-secondary" />
+              </div>
+              <div>
+                <Label className="mb-1.5 text-xs text-muted-foreground">Private payment proof *</Label>
+                <input type="file" accept="image/*,application/pdf" onChange={(event) => uploadPaymentProof(pendingPayment, event.target.files?.[0])} disabled={uploading || !paymentForm.payment_reference.trim()} className="block w-full cursor-pointer text-sm text-muted-foreground file:mr-3 file:rounded-lg file:border-0 file:bg-cyan-500/10 file:px-4 file:py-2 file:text-xs file:font-medium file:text-cyan-400 disabled:opacity-40" />
+                {uploading && <p className="mt-1 text-xs text-muted-foreground"><Loader2 size={12} className="mr-1 inline animate-spin" />Uploading privately...</p>}
+              </div>
+            </div>
+          )}
+          {pendingPayment.payment_proof_url && <Button size="sm" variant="outline" onClick={() => openPrivateProof(pendingPayment.payment_proof_url)} className="mt-4 border-border text-xs"><FileText size={12} className="mr-1" /> View submitted proof</Button>}
+        </div>
       )}
 
-      {/* Payment status summary */}
+      {confirmedReceipt && (
+        <div className="mb-6 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5">
+          <div className="mb-4 flex items-center gap-2"><ShieldCheck size={16} className="text-emerald-400" /><h2 className="text-sm font-semibold text-emerald-400">Payment Confirmation Record</h2></div>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between gap-4"><span className="text-muted-foreground">Receipt number</span><span className="font-mono text-xs">{confirmedReceipt.receipt_number}</span></div>
+            <div className="flex justify-between gap-4"><span className="text-muted-foreground">Amount paid</span><span className="font-mono font-bold text-emerald-400">{formatCurrency(confirmedReceipt.amount_paid)}</span></div>
+            <div className="flex justify-between gap-4"><span className="text-muted-foreground">Payment method</span><span>{confirmedReceipt.payment_method}</span></div>
+            <div className="flex justify-between gap-4"><span className="text-muted-foreground">Date confirmed</span><span>{confirmedReceipt.date_paid}</span></div>
+            <div className="flex justify-between gap-4"><span className="text-muted-foreground">Confirmed by</span><span>{confirmedReceipt.confirmed_by}</span></div>
+          </div>
+        </div>
+      )}
+
       {payments.length > 0 && (
         <div className="rounded-xl border border-border/50 bg-card p-5">
-          <h2 className="text-sm font-semibold mb-3">Payment Status</h2>
-          {payments.map(p => (
-            <div key={p.id} className="flex items-center justify-between py-2 border-b border-border/30 last:border-0">
-              <div>
-                <p className="text-sm">{formatCurrency(p.amount_due)} due</p>
-                {p.balance_due > 0 && <p className="text-xs text-orange-400">Balance: {formatCurrency(p.balance_due)}</p>}
-              </div>
-              <StatusBadge status={p.payment_status} />
+          <h2 className="mb-3 text-sm font-semibold">Payment History</h2>
+          {payments.map((payment) => (
+            <div key={payment.id} className="flex items-center justify-between gap-4 border-b border-border/30 py-3 last:border-0">
+              <div><p className="text-sm">{formatCurrency(payment.amount_due)} due</p>{payment.balance_due > 0 && <p className="text-xs text-orange-400">Balance: {formatCurrency(payment.balance_due)}</p>}</div>
+              <StatusBadge status={payment.payment_status} />
             </div>
           ))}
         </div>
