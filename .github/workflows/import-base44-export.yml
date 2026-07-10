@@ -1,4 +1,4 @@
-name: Import Base44 export
+name: Import and clean Base44 export
 
 on:
   workflow_dispatch:
@@ -8,6 +8,7 @@ on:
     paths:
       - cognita-ai-academy.zip
       - scripts/import_base44_zip.py
+      - scripts/clean_cognita.py
       - .github/workflows/import-base44-export.yml
   pull_request:
     branches:
@@ -15,13 +16,14 @@ on:
     paths:
       - cognita-ai-academy.zip
       - scripts/import_base44_zip.py
+      - scripts/clean_cognita.py
       - .github/workflows/import-base44-export.yml
 
 permissions:
   contents: write
 
 jobs:
-  import:
+  import-and-clean:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
@@ -33,13 +35,31 @@ jobs:
       - name: Extract Base44 source safely
         run: python scripts/import_base44_zip.py
 
+      - name: Apply verified cleanup
+        run: python scripts/clean_cognita.py
+
+      - name: Refresh dependency lockfile
+        run: npm install --package-lock-only --ignore-scripts
+
       - name: Install dependencies
         run: npm ci --ignore-scripts
+
+      - name: Remove unused imports
+        run: npm run lint:fix
+
+      - name: Verify lint
+        run: npm run lint
+
+      - name: Verify typecheck
+        run: npm run typecheck
+
+      - name: Verify dependency audit
+        run: npm audit --audit-level=moderate
 
       - name: Verify production build
         run: npm run build
 
-      - name: Commit extracted source
+      - name: Commit cleaned source
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -48,6 +68,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No source changes to commit."
           else
-            git commit -m "Import extracted Base44 source"
+            git commit -m "Clean imported Cognita source"
             git push origin HEAD:import/base44-export
           fi
