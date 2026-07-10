@@ -11,7 +11,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 export default function StudentLesson() {
   const { week } = useParams();
-  const weekNum = parseInt(week);
+  const weekNum = parseInt(week, 10);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -31,9 +31,8 @@ export default function StudentLesson() {
         base44.entities.Lesson.filter({ week_number: weekNum }),
       ]);
       setSubmissions(subs);
-      // Find override: track-specific first, then foundation
-      const trackMatch = lessons.find(l => l.track === students[0].track);
-      const foundationMatch = lessons.find(l => !l.track);
+      const trackMatch = lessons.find((lesson) => lesson.track === students[0].track);
+      const foundationMatch = lessons.find((lesson) => !lesson.track);
       setLessonOverride(trackMatch || foundationMatch || null);
     }
     setLoading(false);
@@ -42,42 +41,93 @@ export default function StudentLesson() {
   useEffect(() => { load(); }, [weekNum]);
 
   if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="animate-spin text-muted-foreground" size={24} /></div>;
-
-  if (!student) return <div className="text-center py-20 text-muted-foreground">Not enrolled yet.</div>;
+  if (!student) return <div className="py-20 text-center text-muted-foreground">Not enrolled yet.</div>;
 
   const staticLesson = getWeekLesson(weekNum, student.track);
-  if (!staticLesson) {
-    return <div className="text-center py-20 text-muted-foreground">Lesson not found.</div>;
-  }
+  if (!staticLesson) return <div className="py-20 text-center text-muted-foreground">Lesson not found.</div>;
 
   const lesson = mergeLessonOverride(staticLesson, lessonOverride);
   const unlocked = isWeekUnlocked(weekNum, submissions) && !lesson.isLocked;
   const status = getWeekStatus(weekNum, submissions);
-  const submission = submissions.find(s => s.week_number === weekNum);
+  const submission = submissions.find((item) => item.week_number === weekNum);
   const isPassed = status === "Passed";
   const needsRevision = status === "Needs Revision";
-  const canSubmit = unlocked && !isPassed;
+  const canSubmit = unlocked && !isPassed && status !== "Submitted";
+
+  const uploadPrivateFiles = async (files) => {
+    const references = [];
+    for (const file of files) {
+      try {
+        const result = await base44.integrations.Core.UploadPrivateFile({ file });
+        references.push(result.file_uri);
+      } catch {
+        const fallback = await base44.integrations.Core.UploadFile({ file });
+        references.push(fallback.file_url);
+      }
+    }
+    return references;
+  };
+
+  const createVersionRecord = async ({ submissionId, versionNumber, content, process_note, reflection, fileReferences, submittedAt }) => {
+    try {
+      await base44.entities.SubmissionVersion.create({
+        submission_id: submissionId,
+        student_id: student.id,
+        week_number: weekNum,
+        version_number: versionNumber,
+        title: lesson.requiredOutput,
+        content,
+        process_note,
+        reflection,
+        file_urls: fileReferences,
+        submitted_at: submittedAt,
+        locked_at: submittedAt,
+        status: "Submitted",
+      });
+    } catch (versionError) {
+      console.error("Submission version record could not be created:", versionError);
+    }
+  };
 
   const handleSubmit = async ({ content, process_note, reflection, files }) => {
     setSubmitting(true);
     try {
-      const fileUrls = [];
-      for (const file of files) {
-        const { file_url } = await base44.integrations.Core.UploadFile({ file });
-        fileUrls.push(file_url);
-      }
+      const uploadedFiles = await uploadPrivateFiles(files);
+      const submittedAt = new Date().toISOString();
 
       if (submission) {
+        const nextVersion = (submission.current_version || 1) + 1;
+        const fileReferences = uploadedFiles.length > 0 ? uploadedFiles : (submission.file_urls || []);
+
         await base44.entities.Submission.update(submission.id, {
           content,
           process_note,
           reflection,
-          file_urls: fileUrls.length > 0 ? fileUrls : submission.file_urls,
+          file_urls: fileReferences,
           status: "Submitted",
-          revision_count: needsRevision ? (submission.revision_count || 0) + 1 : submission.revision_count,
+          current_version: nextVersion,
+          submitted_at: submittedAt,
+          locked_for_review: true,
+          feedback: "",
+          revision_instructions: "",
+          reviewed_by: "",
+          human_review_confirmed: false,
+          reviewer_attestation: "",
+          revision_count: needsRevision ? (submission.revision_count || 0) + 1 : (submission.revision_count || 0),
+          is_portfolio_item: false,
+        });
+
+        await createVersionRecord({
+          submissionId: submission.id,
+          versionNumber: nextVersion,
+          content,
+          process_note,
+          reflection,
+          fileReferences,
+          submittedAt,
         });
       } else {
-        await base44.entities.Submission.create({
+        const created = await base44.entities.Submission.create({
           student_id: student.id,
           week_number: weekNum,
           title: lesson.requiredOutput,
@@ -85,118 +135,97 @@ export default function StudentLesson() {
           content,
           process_note,
           reflection,
-          file_urls: fileUrls,
+          file_urls: uploadedFiles,
           status: "Submitted",
+          current_version: 1,
+          submitted_at: submittedAt,
+          locked_for_review: true,
           portfolio_category: lesson.portfolioCategory,
+          revision_count: 0,
+        });
+
+        await createVersionRecord({
+          submissionId: created.id,
+          versionNumber: 1,
+          content,
+          process_note,
+          reflection,
+          fileReferences: uploadedFiles,
+          submittedAt,
         });
       }
 
-      toast({ title: `Week ${weekNum} output submitted` });
+      toast({ title: `Week ${weekNum} output submitted`, description: "This version is locked while awaiting human review." });
       await load();
-    } catch (err) {
-      toast({ title: "Submission failed", description: err.message, variant: "destructive" });
+    } catch (error) {
+      toast({ title: "Submission failed", description: error.message, variant: "destructive" });
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   return (
     <div>
-      {/* Back link */}
-      <Link to="/student/program" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-4">
+      <Link to="/student/program" className="mb-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground">
         <ArrowLeft size={14} /> Back to Program
       </Link>
 
-      {/* Header */}
-      <div className="flex items-start justify-between mb-6">
+      <div className="mb-6 flex items-start justify-between">
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full border border-border/50 bg-secondary/30 text-muted-foreground">
-              {lesson.phase}
-            </span>
-            <span className="text-[10px] font-mono text-muted-foreground">Week {weekNum}</span>
+          <div className="mb-2 flex items-center gap-2">
+            <span className="rounded-full border border-border/50 bg-secondary/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{lesson.phase}</span>
+            <span className="font-mono text-[10px] text-muted-foreground">Week {weekNum}</span>
             <StatusBadge status={status} />
           </div>
-          <h1 className="text-xl md:text-2xl font-heading font-bold">{lesson.title}</h1>
+          <h1 className="text-xl font-bold md:text-2xl">{lesson.title}</h1>
         </div>
       </div>
 
-      {/* Locked message */}
       {!unlocked && (
-        <div className="rounded-xl border border-border/50 bg-card p-8 text-center mb-6">
-          <Lock size={32} className="text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-lg font-heading font-bold mb-2">This Week is Locked</h2>
-          <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            {lesson.isLocked
-              ? "This lesson has been locked by the academy. Please contact your facilitator."
-              : "Complete and submit the previous week's output to unlock Week " + weekNum + "."}
-          </p>
-          <Button
-            onClick={() => navigate("/student/program")}
-            className="mt-4 bg-cyan-500 text-black hover:bg-cyan-400"
-          >
-            Back to Program
-          </Button>
+        <div className="mb-6 rounded-xl border border-border/50 bg-card p-8 text-center">
+          <Lock size={32} className="mx-auto mb-4 text-muted-foreground" />
+          <h2 className="mb-2 text-lg font-bold">This Week is Locked</h2>
+          <p className="mx-auto max-w-md text-sm text-muted-foreground">{lesson.isLocked ? "This lesson has been locked by the institute. Please contact your facilitator." : `Complete and submit the previous week&apos;s output to unlock Week ${weekNum}.`}</p>
+          <Button onClick={() => navigate("/student/program")} className="mt-4 bg-cyan-500 text-black hover:bg-cyan-400">Back to Program</Button>
         </div>
       )}
 
-      {/* Passed banner */}
+      {status === "Submitted" && (
+        <div className="mb-6 rounded-xl border border-blue-500/20 bg-blue-500/5 p-4">
+          <p className="text-sm font-medium text-blue-400">Version {submission?.current_version || 1} is locked and awaiting human review.</p>
+        </div>
+      )}
+
       {isPassed && (
-        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 mb-6">
-          <div className="flex items-center gap-2">
-            <CheckCircle size={18} className="text-emerald-400" />
-            <p className="text-sm font-medium text-emerald-400">This output has been reviewed and passed.</p>
-          </div>
-          {submission?.is_portfolio_item && (
-            <p className="text-xs text-muted-foreground mt-1 ml-7">Added to your portfolio as {lesson.portfolioCategory}.</p>
-          )}
+        <div className="mb-6 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+          <div className="flex items-center gap-2"><CheckCircle size={18} className="text-emerald-400" /><p className="text-sm font-medium text-emerald-400">This output has been reviewed and passed.</p></div>
+          {submission?.is_portfolio_item && <p className="ml-7 mt-1 text-xs text-muted-foreground">Added to your portfolio as {lesson.portfolioCategory}.</p>}
         </div>
       )}
 
-      {/* Lesson content */}
       {unlocked && (
         <>
-          <div className="rounded-xl border border-border/50 bg-card p-5 md:p-6 mb-6">
-            <LessonDetail lesson={lesson} />
-          </div>
+          <div className="mb-6 rounded-xl border border-border/50 bg-card p-5 md:p-6"><LessonDetail lesson={lesson} /></div>
 
-          {/* Feedback from facilitator */}
           {submission?.feedback && (
-            <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-5 mb-6">
-              <div className="flex items-center gap-2 mb-2">
-                <MessageSquare size={14} className="text-cyan-400" />
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-cyan-400">Facilitator Feedback</p>
-              </div>
-              <p className="text-sm text-foreground/80 whitespace-pre-wrap">{submission.feedback}</p>
+            <div className="mb-6 rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-5">
+              <div className="mb-2 flex items-center gap-2"><MessageSquare size={14} className="text-cyan-400" /><p className="text-[10px] font-semibold uppercase tracking-widest text-cyan-400">Human Reviewer Feedback</p></div>
+              <p className="whitespace-pre-wrap text-sm text-foreground/80">{submission.feedback}</p>
             </div>
           )}
 
-          {/* Revision instructions */}
           {submission?.revision_instructions && (
-            <div className="rounded-xl border border-orange-500/20 bg-orange-500/5 p-5 mb-6">
-              <div className="flex items-center gap-2 mb-2">
-                <AlertCircle size={14} className="text-orange-400" />
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-orange-400">Revision Instructions</p>
-              </div>
-              <p className="text-sm text-foreground/80 whitespace-pre-wrap">{submission.revision_instructions}</p>
+            <div className="mb-6 rounded-xl border border-orange-500/20 bg-orange-500/5 p-5">
+              <div className="mb-2 flex items-center gap-2"><AlertCircle size={14} className="text-orange-400" /><p className="text-[10px] font-semibold uppercase tracking-widest text-orange-400">Revision Instructions</p></div>
+              <p className="whitespace-pre-wrap text-sm text-foreground/80">{submission.revision_instructions}</p>
             </div>
           )}
 
-          {/* Submission form */}
           {canSubmit && (
             <div className="rounded-xl border border-border/50 bg-card p-5 md:p-6">
-              <h2 className="text-sm font-semibold mb-4">
-                {needsRevision ? "Resubmit Output" : "Submit Your Output"}
-              </h2>
-              {needsRevision && (
-                <p className="text-xs text-orange-400 mb-4">
-                  Your previous submission needs revision. Update your work and resubmit.
-                </p>
-              )}
-              <SubmissionForm
-                existing={submission}
-                onSubmit={handleSubmit}
-                submitting={submitting}
-              />
+              <h2 className="mb-4 text-sm font-semibold">{needsRevision ? "Submit a New Version" : "Submit Your Output"}</h2>
+              {needsRevision && <p className="mb-4 text-xs text-orange-400">Your previous version remains in the audit history. Submit the revised work as a new locked version.</p>}
+              <SubmissionForm existing={submission} onSubmit={handleSubmit} submitting={submitting} />
             </div>
           )}
         </>
