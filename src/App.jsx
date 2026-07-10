@@ -54,6 +54,7 @@ const AdminRefunds = lazy(() => import('@/pages/admin/AdminRefunds'));
 const AdminPartnerInquiries = lazy(() => import('@/pages/admin/AdminPartnerInquiries'));
 const AdminLeads = lazy(() => import('@/pages/admin/AdminLeads'));
 const AdminWaitlist = lazy(() => import('@/pages/admin/AdminWaitlist'));
+const AdminSupportTickets = lazy(() => import('@/pages/admin/AdminSupportTickets'));
 const StudentDashboard = lazy(() => import('@/pages/student/StudentDashboard'));
 const StudentProgram = lazy(() => import('@/pages/student/StudentProgram'));
 const StudentLesson = lazy(() => import('@/pages/student/StudentLesson'));
@@ -133,6 +134,7 @@ const AuthenticatedApp = () => {
             <Route path="/dashboard/quizzes" element={<AdminQuizzes />} />
             <Route path="/dashboard/announcements" element={<AdminAnnouncements />} />
             <Route path="/dashboard/messages" element={<AdminMessages />} />
+            <Route path="/dashboard/support" element={<AdminSupportTickets />} />
             <Route path="/dashboard/playstore" element={<AdminPlayStore />} />
             <Route path="/dashboard/payments" element={<AdminPayments />} />
             <Route path="/dashboard/invoices" element={<AdminInvoices />} />
