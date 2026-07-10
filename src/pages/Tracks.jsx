@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Palette, Briefcase, Rocket, GraduationCap, Clock } from "lucide-react";
+import { ArrowRight, Briefcase, Clock, GraduationCap, Palette, Rocket } from "lucide-react";
 
 const TRACKS_DATA = [
   {
@@ -10,48 +10,42 @@ const TRACKS_DATA = [
     who: "Designers, writers, content creators, marketers, artists, and creative professionals.",
     focus: [
       "AI-assisted content creation and ideation",
-      "Visual design and image generation workflows",
+      "Visual design and image-generation workflows",
       "Writing, copywriting, and editorial AI tools",
       "Creative portfolio development",
     ],
-    accent: "text-cyan-400",
-    badge: "bg-cyan-500/10 border-cyan-500/20",
-    comingSoon: false,
+    active: true,
   },
   {
     icon: Briefcase,
-    name: "AI for Professionals & VAs",
+    name: "AI for Professionals and Virtual Assistants",
     tagline: "Productivity, operations, and professional workflows",
     who: "Virtual assistants, operations staff, executive assistants, freelancers, and office professionals.",
     focus: [
-      "Email, scheduling, and communication automation",
+      "Email, scheduling, and communication workflows",
       "Document creation and data processing",
-      "Client management and reporting workflows",
-      "Professional systems and SOPs with AI",
+      "Client management and reporting systems",
+      "Professional procedures and SOPs with AI",
     ],
-    accent: "text-blue-400",
-    badge: "bg-blue-500/10 border-blue-500/20",
-    comingSoon: false,
+    active: true,
   },
   {
     icon: Rocket,
     name: "AI for Entrepreneurs",
     tagline: "Business strategy, marketing, and startup tools",
-    who: "Founders, small business owners, solopreneurs, and aspiring entrepreneurs.",
+    who: "Founders, small-business owners, solopreneurs, and aspiring entrepreneurs.",
     focus: [
-      "Market research and competitive analysis with AI",
-      "Business plan and pitch deck generation",
-      "Marketing automation and lead generation",
-      "Revenue-generating AI workflows",
+      "Market research and competitive analysis",
+      "Business-plan and pitch development",
+      "Marketing systems and lead-generation workflows",
+      "Revenue-focused AI applications",
     ],
-    accent: "text-emerald-400",
-    badge: "bg-emerald-500/10 border-emerald-500/20",
-    comingSoon: true,
+    active: false,
   },
   {
     icon: GraduationCap,
     name: "AI for Students",
-    tagline: "Academic productivity and research skills",
+    tagline: "Academic productivity and responsible research skills",
     who: "College students, graduate students, researchers, and academic professionals.",
     focus: [
       "Research assistance and literature review",
@@ -59,70 +53,73 @@ const TRACKS_DATA = [
       "Study systems and exam preparation",
       "Thesis and project development with AI",
     ],
-    accent: "text-amber-400",
-    badge: "bg-amber-500/10 border-amber-500/20",
-    comingSoon: true,
+    active: false,
   },
 ];
 
 export default function Tracks() {
   return (
-    <div>
-      <section className="max-w-7xl mx-auto px-5 sm:px-6 pt-20 pb-12">
-        <div className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-400 mb-4">Specialization Tracks</p>
-          <h1 className="section-title text-3xl md:text-5xl font-heading font-bold tracking-tight leading-tight mb-6">
-            CHOOSE YOUR
-            <br />
-            <span className="text-cyan-400">TRACK</span>
-          </h1>
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-            After completing the 4-week AI Foundation, students enter their specialization track for Weeks 5-9. Each track focuses on applied AI skills relevant to your field. Two tracks are currently active for the pilot batch.
-          </p>
+    <div className="apple-surface min-h-screen">
+      <section className="relative overflow-hidden px-5 pb-16 pt-24 sm:px-6 md:pb-24 md:pt-32">
+        <div className="absolute left-1/2 top-0 h-[28rem] w-[54rem] -translate-x-1/2 rounded-full bg-sky-400/[0.075] blur-[130px]" />
+        <div className="relative mx-auto max-w-7xl">
+          <div className="max-w-4xl">
+            <p className="apple-eyebrow">Specialization tracks</p>
+            <h1 className="mt-5 text-4xl font-semibold leading-[1.03] tracking-[-0.055em] text-white sm:text-5xl md:text-7xl">
+              Applied AI for different professional contexts.
+            </h1>
+            <p className="mt-7 max-w-3xl text-base leading-8 text-slate-300/75 md:text-xl">
+              In the 10-Week Professional AI Program, learners complete the common AI Foundation before entering a specialization pathway for Weeks 5 to 9. Track availability depends on the active cohort.
+            </p>
+          </div>
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-5 sm:px-6 pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {TRACKS_DATA.map((t, i) => (
-            <div key={i} className={`card-glow rounded-xl p-6 ${t.comingSoon ? "opacity-60" : ""}`}>
-              <div className="flex items-start justify-between mb-5">
-                <div className={`w-12 h-12 rounded-xl border ${t.badge} flex items-center justify-center`}>
-                  <t.icon size={24} className={t.accent} />
+      <section className="mx-auto max-w-7xl px-5 pb-20 sm:px-6 md:pb-28">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          {TRACKS_DATA.map(({ icon: Icon, name, tagline, who, focus, active }) => (
+            <article key={name} className={`apple-card p-6 md:p-8 ${active ? "" : "opacity-70"}`}>
+              <div className="flex items-start justify-between gap-4">
+                <div className="apple-icon-tile">
+                  <Icon size={25} className="text-sky-300" />
                 </div>
-                {t.comingSoon && (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest px-2 py-1 rounded-full border border-border/50 bg-background/50 text-muted-foreground">
-                    <Clock size={10} /> Coming Soon
-                  </span>
-                )}
+                <span className="apple-status-pill">
+                  {active ? "Active track" : <><Clock size={10} className="mr-1" /> Planned track</>}
+                </span>
               </div>
-              <h3 className="text-xl font-heading font-bold mb-1">{t.name}</h3>
-              <p className={`text-sm ${t.accent} mb-4`}>{t.tagline}</p>
-              <div className="mb-4">
-                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Who it's for</p>
-                <p className="text-sm text-foreground/80">{t.who}</p>
+
+              <h2 className="mt-7 text-2xl font-semibold tracking-[-0.035em] text-white">{name}</h2>
+              <p className="mt-2 text-sm font-medium text-sky-300/80">{tagline}</p>
+
+              <div className="mt-6 rounded-2xl border border-white/[0.075] bg-white/[0.025] p-4">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-500">Designed for</p>
+                <p className="mt-2 text-sm leading-6 text-slate-300">{who}</p>
               </div>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Focus Areas</p>
-                <ul className="space-y-1.5">
-                  {t.focus.map((f, j) => (
-                    <li key={j} className="text-sm text-foreground/70 flex items-start gap-2">
-                      <span className={`${t.accent} mt-1.5 flex-shrink-0`}>·</span>
-                      {f}
+
+              <div className="mt-6">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-500">Focus areas</p>
+                <ul className="mt-3 space-y-3">
+                  {focus.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-400">
+                      <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-sky-300/70" />
+                      {item}
                     </li>
                   ))}
                 </ul>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </section>
 
-      <section className="border-t border-border/50">
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-12 md:py-16 text-center">
-          <p className="text-muted-foreground mb-6">Track preference is indicated during application. Final assignment is confirmed upon enrollment.</p>
-          <Link to="/apply" className="btn-glow inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-lg">
-            APPLY FOR THE NEXT BATCH <ArrowRight size={16} />
+      <section className="border-t border-white/[0.065]">
+        <div className="mx-auto max-w-7xl px-5 py-16 text-center sm:px-6 md:py-20">
+          <p className="mx-auto max-w-2xl text-base leading-7 text-slate-400">
+            Applicants indicate a preferred track during admission. Final placement depends on the active cohort, learner goals, and available facilitation.
+          </p>
+          <Link to="/apply" className="apple-button-primary mt-7 gap-2 px-7 py-3.5 text-sm font-semibold">
+            Apply to the 10-week program
+            <ArrowRight size={16} />
           </Link>
         </div>
       </section>

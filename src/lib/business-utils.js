@@ -62,14 +62,15 @@ export const PARTNER_TYPES = [
 ];
 
 export const PARTNER_PROGRAMS = [
-  "AI Literacy Workshop",
-  "10-Week Cognita Academy Batch",
-  "Teacher AI Training",
-  "Student AI Training",
-  "Staff Productivity Training",
-  "Creative AI Training",
-  "Virtual Assistant AI Training",
-  "Custom Institutional Program",
+  "Open Learning Group Access",
+  "10-Week Professional AI Program",
+  "Educator AI Development Program",
+  "Student AI Development Program",
+  "Workforce AI Productivity Training",
+  "Creative AI Professional Training",
+  "Virtual Assistant AI Professional Training",
+  "Assessment and Credentialing Service",
+  "Custom Institutional Training Program",
 ];
 
 export const PARTNER_INQUIRY_STATUSES = [

@@ -1,85 +1,150 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Lock } from "lucide-react";
+import { ArrowRight, CheckCircle2, Lock, ShieldCheck } from "lucide-react";
+import ProgramPortfolio from "@/components/ProgramPortfolio";
 import { CURRICULUM } from "@/lib/curriculum";
-
-const phaseColors = {
-  "AI Foundation": "border-cyan-500/20 from-cyan-500/5",
-  "Specialization Track": "border-blue-500/20 from-blue-500/5",
-  "Final Review": "border-amber-500/20 from-amber-500/5",
-};
+import { FLAGSHIP_PROGRAM } from "@/lib/program-portfolio";
 
 const phaseBadge = {
-  "AI Foundation": "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
-  "Specialization Track": "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  "Final Review": "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  "AI Foundation": "border-sky-300/15 bg-sky-300/[0.07] text-sky-200",
+  "Specialization Track": "border-indigo-300/15 bg-indigo-300/[0.07] text-indigo-200",
+  "Final Review": "border-amber-300/15 bg-amber-300/[0.07] text-amber-200",
 };
 
 export default function Program() {
+  const curriculum = CURRICULUM.filter(
+    (week, index, weeks) => weeks.findIndex((item) => item.week === week.week) === index
+  );
+
   return (
-    <div>
-      <section className="max-w-7xl mx-auto px-5 sm:px-6 pt-20 pb-12">
-        <div className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-400 mb-4">The Program</p>
-          <h1 className="section-title text-3xl md:text-5xl font-heading font-bold tracking-tight leading-tight mb-6">
-            THE 10-WEEK
-            <br />
-            <span className="text-cyan-400">LEARNING PATH</span>
-          </h1>
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-            The Cognita program is divided into three phases: AI Foundation (Weeks 1-4), Specialization Track (Weeks 5-9), and Capstone (Week 10). Every week requires a real output reviewed by a facilitator. Weeks unlock progressively — you can't skip ahead.
-          </p>
+    <div className="apple-surface">
+      <section className="relative overflow-hidden px-5 pb-16 pt-24 sm:px-6 md:pb-24 md:pt-32">
+        <div className="absolute left-1/2 top-0 h-[28rem] w-[54rem] -translate-x-1/2 rounded-full bg-sky-400/[0.075] blur-[130px]" />
+        <div className="relative mx-auto max-w-7xl">
+          <div className="max-w-4xl">
+            <p className="apple-eyebrow">Cognita program portfolio</p>
+            <h1 className="mt-5 text-4xl font-semibold leading-[1.03] tracking-[-0.055em] text-white sm:text-5xl md:text-7xl">
+              Four pathways. One standard of clarity.
+            </h1>
+            <p className="mt-7 max-w-3xl text-base leading-8 text-slate-300/75 md:text-xl">
+              Cognita separates learning access, guided professional training, formal assessment, and institutional delivery so every learner and partner understands exactly what is included.
+            </p>
+          </div>
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-5 sm:px-6 pb-20">
-        <div className="space-y-4">
-          {CURRICULUM.filter((w, i, arr) => arr.findIndex(x => x.week === w.week) === i).map((w) => (
-            <div
-              key={w.week}
-              className={`card-glow rounded-xl border bg-gradient-to-r to-transparent p-5 md:p-6 ${phaseColors[w.phase]}`}
-            >
-              <div className="flex flex-col md:flex-row md:items-start gap-4">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-lg bg-background/50 flex items-center justify-center border border-cyan-500/20">
-                    <span className="text-sm font-mono font-bold text-cyan-400">{String(w.week).padStart(2, "0")}</span>
+      <section className="mx-auto max-w-7xl px-5 pb-20 sm:px-6 md:pb-28">
+        <ProgramPortfolio detailed />
+      </section>
+
+      <section id="flagship-program" className="border-y border-white/[0.065] bg-white/[0.012]">
+        <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
+          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+            <div className="lg:sticky lg:top-28 lg:self-start">
+              <p className="apple-eyebrow">Under {FLAGSHIP_PROGRAM.parent}</p>
+              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-white md:text-5xl">
+                {FLAGSHIP_PROGRAM.name}
+              </h2>
+              <p className="mt-5 text-base leading-8 text-slate-300/75">
+                {FLAGSHIP_PROGRAM.description}
+              </p>
+
+              <div className="mt-8 space-y-3">
+                {[
+                  "Fixed cohort and progressive weekly access",
+                  "Human facilitator review for required outputs",
+                  "Revision opportunities based on documented feedback",
+                  "Portfolio development throughout the program",
+                  "Certificate review after completion requirements are met",
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-300">
+                    <CheckCircle2 size={16} className="mt-1 flex-shrink-0 text-sky-300" />
+                    <span>{item}</span>
                   </div>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    <span className={`text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full border ${phaseBadge[w.phase]}`}>
-                      {w.phase}
-                    </span>
-                    {w.track && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full border border-blue-500/20 bg-blue-500/5 text-blue-400">
-                        Track-specific
-                      </span>
-                    )}
-                    {w.week > 1 && (
-                      <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                        <Lock size={10} /> Progressive unlock
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="text-base md:text-lg font-heading font-semibold mb-1">{w.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-3 leading-relaxed">{w.lessonOverview}</p>
-                  <div className="p-3 rounded-lg bg-background/40 border border-border/30">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-cyan-400/70 mb-1">Required Output</p>
-                    <p className="text-sm text-foreground/90">{w.requiredOutput}</p>
+                ))}
+              </div>
+
+              <div className="mt-8 rounded-2xl border border-amber-300/12 bg-amber-300/[0.04] p-5">
+                <div className="flex items-start gap-3">
+                  <ShieldCheck size={19} className="mt-0.5 flex-shrink-0 text-amber-200" />
+                  <div>
+                    <p className="text-sm font-semibold text-amber-100">Credentialing is not automatic</p>
+                    <p className="mt-2 text-xs leading-6 text-slate-400">
+                      Attendance alone does not earn a certificate. Required outputs, completion evidence, and final review determine eligibility.
+                    </p>
                   </div>
                 </div>
               </div>
+
+              <Link to="/apply" className="apple-button-primary mt-8 gap-2 px-7 py-3.5 text-sm font-semibold">
+                Apply to the next cohort
+                <ArrowRight size={16} />
+              </Link>
             </div>
-          ))}
+
+            <div className="space-y-4">
+              {curriculum.map((week) => (
+                <article key={week.week} className="apple-card p-5 md:p-7">
+                  <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.035]">
+                      <span className="font-mono text-sm font-semibold text-sky-300">
+                        {String(week.week).padStart(2, "0")}
+                      </span>
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.13em] ${phaseBadge[week.phase]}`}>
+                          {week.phase}
+                        </span>
+                        {week.track && (
+                          <span className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 text-[10px] uppercase tracking-[0.13em] text-slate-400">
+                            Track-specific
+                          </span>
+                        )}
+                        {week.week > 1 && (
+                          <span className="flex items-center gap-1 text-[10px] text-slate-500">
+                            <Lock size={10} /> Progressive access
+                          </span>
+                        )}
+                      </div>
+
+                      <h3 className="mt-4 text-xl font-semibold tracking-[-0.025em] text-white">
+                        {week.title}
+                      </h3>
+                      <p className="mt-3 text-sm leading-7 text-slate-400">
+                        {week.lessonOverview}
+                      </p>
+
+                      <div className="mt-5 rounded-2xl border border-white/[0.07] bg-black/10 p-4">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-sky-300/70">
+                          Required output
+                        </p>
+                        <p className="mt-2 text-sm leading-6 text-slate-200">
+                          {week.requiredOutput}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="border-t border-border/50 bg-secondary/20">
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-12 md:py-16 text-center">
-          <h2 className="text-2xl font-heading font-bold mb-3">Ready for structured AI training?</h2>
-          <p className="text-muted-foreground mb-6">Applications are reviewed individually.</p>
-          <Link to="/apply" className="btn-glow inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-lg">
-            APPLY FOR THE NEXT BATCH <ArrowRight size={16} />
+      <section className="mx-auto max-w-7xl px-5 py-20 text-center sm:px-6 md:py-28">
+        <div className="apple-card p-8 md:p-14">
+          <p className="apple-eyebrow">Professional Programs admissions</p>
+          <h2 className="mx-auto mt-4 max-w-3xl text-3xl font-semibold tracking-[-0.045em] text-white md:text-5xl">
+            Applications are reviewed before enrollment.
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400">
+            The 10-week program is designed for learners who are prepared to complete weekly practical work and respond to facilitator feedback.
+          </p>
+          <Link to="/apply" className="apple-button-primary mt-8 gap-2 px-7 py-3.5 text-sm font-semibold">
+            Start your application
+            <ArrowRight size={16} />
           </Link>
         </div>
       </section>

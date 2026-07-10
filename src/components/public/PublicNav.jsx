@@ -5,9 +5,9 @@ import BrandLockup from "@/components/BrandLockup";
 
 const NAV_LINKS = [
   { label: "About", path: "/about" },
-  { label: "Program", path: "/program" },
+  { label: "Programs", path: "/program" },
   { label: "Tracks", path: "/tracks" },
-  { label: "Partners", path: "/partner" },
+  { label: "Institutions", path: "/partner" },
   { label: "Teach", path: "/teach" },
   { label: "FAQ", path: "/faq" },
   { label: "Verify", path: "/verify" },
@@ -19,61 +19,87 @@ export default function PublicNav() {
   const location = useLocation();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-cyan-500/10 bg-background/80 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 h-16 flex items-center justify-between">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.07] bg-[#050914]/76 backdrop-blur-2xl supports-[backdrop-filter]:bg-[#050914]/64">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 h-[68px] flex items-center justify-between">
         <Link to="/" className="flex-shrink-0">
           <BrandLockup size="sm" />
         </Link>
 
-        <div className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map(l => (
-            <Link
-              key={l.path}
-              to={l.path}
-              className={`text-sm font-medium transition-colors ${
-                location.pathname === l.path
-                  ? "text-cyan-400"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {l.label}
-            </Link>
-          ))}
+        <div className="hidden lg:flex items-center gap-1 rounded-full border border-white/[0.07] bg-white/[0.025] p-1">
+          {NAV_LINKS.map((link) => {
+            const active = location.pathname === link.path;
+            return (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`rounded-full px-3.5 py-2 text-[13px] font-medium transition-colors ${
+                  active
+                    ? "bg-white/[0.08] text-white shadow-sm"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </div>
 
-        <div className="hidden md:flex items-center gap-3">
-          <Link to="/apply" className="btn-glow px-5 py-2 text-sm font-semibold rounded-lg">
-            Apply Now
-          </Link>
-          <Link to="/login" className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+        <div className="hidden md:flex items-center gap-2">
+          <Link
+            to="/login"
+            className="apple-button-secondary px-4 py-2 text-sm font-medium"
+          >
             Sign In
           </Link>
+          <Link
+            to="/apply"
+            className="apple-button-primary px-5 py-2 text-sm font-semibold"
+          >
+            Apply
+          </Link>
         </div>
 
-        <button className="md:hidden text-foreground" onClick={() => setOpen(!open)}>
-          {open ? <X size={20} /> : <Menu size={20} />}
+        <button
+          type="button"
+          className="md:hidden flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-foreground"
+          onClick={() => setOpen(!open)}
+          aria-label={open ? "Close navigation" : "Open navigation"}
+        >
+          {open ? <X size={19} /> : <Menu size={19} />}
         </button>
       </div>
 
       {open && (
-        <div className="md:hidden border-t border-cyan-500/10 bg-background/95 backdrop-blur-xl">
-          <div className="px-5 py-4 space-y-3">
-            {NAV_LINKS.map(l => (
+        <div className="md:hidden border-t border-white/[0.07] bg-[#050914]/96 backdrop-blur-2xl">
+          <div className="px-5 py-5 space-y-1">
+            {NAV_LINKS.map((link) => (
               <Link
-                key={l.path}
-                to={l.path}
+                key={link.path}
+                to={link.path}
                 onClick={() => setOpen(false)}
-                className="block text-sm font-medium text-muted-foreground hover:text-foreground"
+                className={`block rounded-xl px-3 py-3 text-sm font-medium ${
+                  location.pathname === link.path
+                    ? "bg-white/[0.06] text-white"
+                    : "text-slate-400 hover:bg-white/[0.035] hover:text-white"
+                }`}
               >
-                {l.label}
+                {link.label}
               </Link>
             ))}
-            <div className="pt-3 border-t border-border/50 space-y-2">
-              <Link to="/apply" onClick={() => setOpen(false)} className="btn-glow block w-full text-center px-5 py-2.5 text-sm font-semibold rounded-lg">
-                Apply Now
-              </Link>
-              <Link to="/login" onClick={() => setOpen(false)} className="block w-full text-center px-4 py-2 text-sm font-medium text-muted-foreground">
+            <div className="pt-4 mt-3 border-t border-white/[0.07] grid grid-cols-2 gap-2">
+              <Link
+                to="/login"
+                onClick={() => setOpen(false)}
+                className="apple-button-secondary px-4 py-3 text-center text-sm font-medium"
+              >
                 Sign In
+              </Link>
+              <Link
+                to="/apply"
+                onClick={() => setOpen(false)}
+                className="apple-button-primary px-4 py-3 text-center text-sm font-semibold"
+              >
+                Apply
               </Link>
             </div>
           </div>
