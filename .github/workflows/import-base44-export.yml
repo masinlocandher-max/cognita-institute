@@ -9,6 +9,13 @@ on:
       - cognita-ai-academy.zip
       - scripts/import_base44_zip.py
       - .github/workflows/import-base44-export.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - cognita-ai-academy.zip
+      - scripts/import_base44_zip.py
+      - .github/workflows/import-base44-export.yml
 
 permissions:
   contents: write
