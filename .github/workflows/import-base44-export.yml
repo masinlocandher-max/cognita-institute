@@ -1,0 +1,46 @@
+name: Import Base44 export
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - import/base44-export
+    paths:
+      - cognita-ai-academy.zip
+      - scripts/import_base44_zip.py
+      - .github/workflows/import-base44-export.yml
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out import branch
+        uses: actions/checkout@v4
+        with:
+          ref: import/base44-export
+
+      - name: Extract Base44 source safely
+        run: python scripts/import_base44_zip.py
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Verify production build
+        run: npm run build
+
+      - name: Commit extracted source
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all
+          git reset -- dist node_modules .vite 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No source changes to commit."
+          else
+            git commit -m "Import extracted Base44 source"
+            git push origin HEAD:import/base44-export
+          fi
