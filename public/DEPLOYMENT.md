@@ -1,0 +1,1 @@
+Built static files are deployed from `dist` by `.github/workflows/deploy-pages.yml`.
