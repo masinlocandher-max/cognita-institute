@@ -1,77 +1,77 @@
-# Base44 Project
+# Cognita Institute
 
-Use this repository to run and edit the app locally, then publish changes back through Base44.
+Cognita is a Base44-built React/Vite application for AI education, applications, enrollment, lessons, quizzes, submissions, certificates, messaging, payments, and role-based dashboards.
 
-Any change pushed to the repo will also be reflected in the Base44 Builder.
+## Repository status
 
-## Prerequisites
+This repository was created from a manual Base44 ZIP export.
 
-1. Clone the repository using the project's Git URL.
-2. Navigate to the project directory.
-3. Install dependencies: `npm install`.
-4. Install the Base44 CLI: `npm install -g base44@latest`.
+GitHub is currently the editable source and backup for Cognita. Automatic two-way synchronization with the Base44 Builder has not been verified, so a GitHub change must not be assumed to appear in Base44 or on the live app automatically.
 
-See the [Base44 CLI docs](https://docs.base44.com/developers/references/cli/get-started/overview) if you want to run Base44 commands directly.
+The cleaned source is being reviewed through a pull request before it is merged into `main`.
 
-## Run Locally
+## Main project areas
 
-Run the full local development environment from the project root:
+- `src/`: React frontend
+- `src/pages/`: public, admin, facilitator, and student pages
+- `src/components/`: shared interface and curriculum components
+- `base44/entities/`: Base44 entity schemas
+- `base44/workflows/`: lifecycle email workflows
+- `base44/functions/`: Base44 server functions
+- `AUDIT.md`: current technical status, resolved issues, and remaining risks
+
+## Local setup
+
+Requirements:
+
+- Node.js 20 or newer
+- npm
+
+Install and verify:
 
 ```bash
-base44 dev
+npm ci
+npm run lint
+npm run typecheck
+npm audit --audit-level=moderate
+npm run build
 ```
 
-`base44 dev` starts the local Base44 development backend and, when this app is configured for it, also starts the frontend dev server for you. Use the frontend URL printed by the command.
-
-For example, when the Base44 project config includes a `serveCommand`, `base44 dev` can launch the frontend too:
-
-```json5
-{
-  "site": {
-    "serveCommand": "npm run dev"
-  }
-}
-```
-
-In a Base44 project this lives in `base44/config.jsonc`.
-
-## Run Only The Frontend
-
-If you only want to work on the frontend against the hosted Base44 backend, run:
+Run the frontend locally:
 
 ```bash
 npm run dev
 ```
 
-Open the local URL printed by Vite.
-
-## Use The Hosted Backend
-
-For frontend-only development, create or update `.env.local` in the project root:
+For frontend-only development against a hosted Base44 backend, create a local `.env.local` file:
 
 ```bash
 VITE_BASE44_APP_ID=your_app_id
 VITE_BASE44_APP_BASE_URL=https://your-app.base44.app
 ```
 
-`VITE_BASE44_APP_ID` identifies the Base44 app.
+Never commit `.env` files or private credentials.
 
-`VITE_BASE44_APP_BASE_URL` tells the Base44 Vite plugin where to send local `/api` requests. Point it at your deployed Base44 app URL when you want the local frontend to use the hosted backend.
+## Base44 development
 
-When you use `base44 dev`, the command injects the local Base44 values for you, so `.env.local` is mainly needed for frontend-only workflows.
-
-## Publish Your Changes
-
-After pushing your changes to git, open the Base44 dashboard and publish the app:
+The project includes Base44 app metadata, entity schemas, workflows, and a server function. Base44 CLI development may be available through:
 
 ```bash
-base44 dashboard open
+base44 dev
 ```
 
-## Docs & Support
+Backend permissions, authentication roles, workflows, and the server function must still be tested in an actual Base44 environment. A successful frontend build does not prove that backend access controls are correct.
 
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
+## Release rule
 
-Base44 CLI command reference: [https://docs.base44.com/developers/references/cli/commands/introduction](https://docs.base44.com/developers/references/cli/commands/introduction)
+Do not treat Cognita as ready for paying users until the following have passed:
 
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+1. Admin, facilitator, and student role-isolation tests
+2. Application and enrollment testing
+3. Payment, invoice, receipt, and refund testing
+4. Lesson, quiz, submission, and certificate testing
+5. Email workflow testing
+6. Password-reset and account-recovery testing
+7. Base44 backend permission review
+
+See `AUDIT.md` for the current verified status.
