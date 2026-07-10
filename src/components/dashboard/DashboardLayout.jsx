@@ -8,7 +8,7 @@ import {
   ClipboardList, LogOut, Menu, X,
   GraduationCap, UserCheck, DollarSign, Layers, BookMarked, ExternalLink, Smartphone,
   Receipt, RefreshCcw, Handshake, UserPlus, Clock, CreditCard,
-  Megaphone, HelpCircle, MessageSquare, BarChart, Library, Landmark
+  Megaphone, HelpCircle, MessageSquare, BarChart, Library, Landmark, LifeBuoy
 } from "lucide-react";
 
 const ADMIN_LINKS = [
@@ -26,6 +26,7 @@ const ADMIN_LINKS = [
   { section: "Academic Operations", label: "Certificates", path: "/dashboard/certificates", icon: Award },
   { section: "Communications", label: "Announcements", path: "/dashboard/announcements", icon: Megaphone },
   { section: "Communications", label: "Messages", path: "/dashboard/messages", icon: MessageSquare },
+  { section: "Communications", label: "Support Tickets", path: "/dashboard/support", icon: LifeBuoy },
   { section: "Finance", label: "Payments", path: "/dashboard/payments", icon: DollarSign },
   { section: "Finance", label: "Invoices", path: "/dashboard/invoices", icon: FileText },
   { section: "Finance", label: "Receipts", path: "/dashboard/receipts", icon: Receipt },
