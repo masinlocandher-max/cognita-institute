@@ -2,49 +2,58 @@ import React from "react";
 import { Link } from "react-router-dom";
 import BrandLockup from "@/components/BrandLockup";
 
+const linkClass = "block text-sm text-slate-400 transition-colors hover:text-white";
+
 export default function PublicFooter() {
   return (
-    <footer className="border-t border-cyan-500/10 bg-background">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+    <footer className="border-t border-white/[0.07] bg-[#050914]">
+      <div className="mx-auto max-w-7xl px-5 py-14 sm:px-6 md:py-16">
+        <div className="grid grid-cols-2 gap-10 md:grid-cols-5">
           <div className="col-span-2">
-            <BrandLockup size="sm" className="mb-4" />
-            <p className="text-sm text-muted-foreground max-w-sm leading-relaxed mt-4">
-              Most AI academies sell certificates. Cognita builds competence.
+            <BrandLockup size="sm" className="mb-5 items-start" />
+            <p className="mt-4 max-w-sm text-sm leading-7 text-slate-500">
+              A private professional AI training institute offering self-paced learning, guided professional programs, assessment and credentialing, and institutional training.
+            </p>
+            <p className="mt-4 max-w-sm text-xs leading-6 text-slate-600">
+              Cognita offers non-degree professional training. Program completion does not represent a college degree or academic credit unless expressly stated and lawfully authorized.
             </p>
           </div>
+
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Academy</h4>
-            <div className="space-y-2">
-              <Link to="/about" className="block text-sm text-foreground/70 hover:text-foreground transition-colors">About</Link>
-              <Link to="/program" className="block text-sm text-foreground/70 hover:text-foreground transition-colors">Program</Link>
-              <Link to="/tracks" className="block text-sm text-foreground/70 hover:text-foreground transition-colors">Tracks</Link>
-              <Link to="/faq" className="block text-sm text-foreground/70 hover:text-foreground transition-colors">FAQ</Link>
+            <h4 className="mb-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-600">Institute</h4>
+            <div className="space-y-3">
+              <Link to="/about" className={linkClass}>About</Link>
+              <Link to="/program" className={linkClass}>Programs</Link>
+              <Link to="/tracks" className={linkClass}>Specialization Tracks</Link>
+              <Link to="/faq" className={linkClass}>Frequently Asked Questions</Link>
             </div>
           </div>
+
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Access</h4>
-            <div className="space-y-2">
-              <Link to="/apply" className="block text-sm text-foreground/70 hover:text-foreground transition-colors">Apply</Link>
-              <Link to="/waitlist" className="block text-sm text-foreground/70 hover:text-foreground transition-colors">Join Waitlist</Link>
-              <Link to="/partner" className="block text-sm text-foreground/70 hover:text-foreground transition-colors">Partner with Us</Link>
-              <Link to="/verify" className="block text-sm text-foreground/70 hover:text-foreground transition-colors">Verify Certificate</Link>
-              <Link to="/login" className="block text-sm text-foreground/70 hover:text-foreground transition-colors">Sign In</Link>
+            <h4 className="mb-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-600">Pathways</h4>
+            <div className="space-y-3">
+              <Link to="/waitlist" className={linkClass}>Open Learning</Link>
+              <Link to="/apply" className={linkClass}>Professional Programs</Link>
+              <Link to="/verify" className={linkClass}>Assessment and Credentialing</Link>
+              <Link to="/partner" className={linkClass}>Institutional Training</Link>
+              <Link to="/login" className={linkClass}>Sign In</Link>
             </div>
           </div>
+
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Legal</h4>
-            <div className="space-y-2">
-              <Link to="/privacy" className="block text-sm text-foreground/70 hover:text-foreground transition-colors">Privacy Policy</Link>
-              <Link to="/terms" className="block text-sm text-foreground/70 hover:text-foreground transition-colors">Terms of Use</Link>
-              <Link to="/contact" className="block text-sm text-foreground/70 hover:text-foreground transition-colors">Contact & Support</Link>
+            <h4 className="mb-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-600">Governance</h4>
+            <div className="space-y-3">
+              <Link to="/privacy" className={linkClass}>Privacy Policy</Link>
+              <Link to="/terms" className={linkClass}>Terms of Use</Link>
+              <Link to="/contact" className={linkClass}>Contact and Support</Link>
+              <Link to="/teach" className={linkClass}>Teach with Cognita</Link>
             </div>
           </div>
         </div>
-        <div className="mt-12 pt-6 border-t border-border/30">
-          <p className="text-xs text-muted-foreground text-center">
-            © {new Date().getFullYear()} Cognita Institute of Artificial Intelligence. All rights reserved.
-          </p>
+
+        <div className="mt-14 flex flex-col gap-3 border-t border-white/[0.065] pt-7 text-center text-xs text-slate-600 md:flex-row md:items-center md:justify-between md:text-left">
+          <p>© {new Date().getFullYear()} Cognita Institute of Artificial Intelligence. All rights reserved.</p>
+          <p>Professional training. Practical outputs. Verified completion.</p>
         </div>
       </div>
     </footer>
