@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 
 const PAYMENT_ACCESS_STATUSES = new Set(["Payment Confirmed", "Payment Waived"]);
-const BLOCKED_ACCESS_STATUSES = new Set(["Pending", "Suspended", "Expired", "Revoked"]);
+const BLOCKED_ACCESS_STATUSES = new Set(["Suspended", "Expired", "Revoked"]);
 
 export default function StudentDashboardWrapper() {
   const [user, setUser] = useState(null);
@@ -33,10 +33,9 @@ export default function StudentDashboardWrapper() {
 
         const paymentAllowsAccess = PAYMENT_ACCESS_STATUSES.has(student.payment_status);
         const explicitAccessBlock = student.access_status && BLOCKED_ACCESS_STATUSES.has(student.access_status);
-        const accessIsActive = student.access_status === "Active" || (!student.access_status && paymentAllowsAccess);
         const isEnrollmentOfficeRoute = ["/student/payments", "/student/enrollment-agreement"].includes(location.pathname);
 
-        if ((!paymentAllowsAccess || explicitAccessBlock || !accessIsActive) && !isEnrollmentOfficeRoute) {
+        if ((!paymentAllowsAccess || explicitAccessBlock) && !isEnrollmentOfficeRoute) {
           setRedirect("/student/payments");
           setLoading(false);
           return;
