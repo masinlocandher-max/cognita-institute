@@ -9,7 +9,6 @@ import {
   Headphones,
   Landmark,
   ShieldCheck,
-  UsersRound,
 } from "lucide-react";
 
 const FOUNDER_IMAGE =
