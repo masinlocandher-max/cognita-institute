@@ -1,6 +1,6 @@
 export const EDITORIAL_ASSETS = {
-  hero: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:52b8779b-64c9-4a94-9501-f2fd2db32efc?size=1600",
-  openLearning: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:537b5534-efeb-4f27-bafe-c0e8d66d0f9c?size=1200",
+  hero: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:a1a702e3-e43a-4327-af47-8185842cbdf4?size=1800",
+  openLearning: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:a1a702e3-e43a-4327-af47-8185842cbdf4?size=1400",
   professionalPrograms: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:5d8bdc43-a95c-4b11-b340-1d443c0638b9?size=1200",
   assessmentCredentialing: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:5a63e66f-67fa-4900-bc62-61dacb5b78d1?size=1200",
   institutionalTraining: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:a6e3ae8f-7d88-40a4-ac25-533de9dba49c?size=1200",
@@ -28,7 +28,7 @@ export const PROGRAM_PORTFOLIO = [
     availability: "Phased launch",
     icon: "open-learning",
     image: EDITORIAL_ASSETS.openLearning,
-    imageAlt: "Independent professional studying through Cognita Open Learning on a silver MacBook.",
+    imageAlt: "Cognita Open Learning student completing self-paced AI study on an HP laptop in a home learning environment.",
   },
   {
     id: "professional-programs",
