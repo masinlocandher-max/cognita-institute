@@ -6,9 +6,9 @@ import RouteTransition from "@/components/RouteTransition";
 
 export default function PublicLayout() {
   return (
-    <div className="corporate-shell min-h-screen flex flex-col">
+    <div className="corporate-shell flex min-h-screen flex-col">
       <PublicNav />
-      <main className="flex-1 pt-16">
+      <main className="flex-1 pt-[100px]">
         <RouteTransition>
           <Outlet />
         </RouteTransition>
