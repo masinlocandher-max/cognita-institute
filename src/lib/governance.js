@@ -1,11 +1,13 @@
 export const OFFICIAL_DOMAIN = "https://thecognitainstitute.com";
 
+export const TEMPORARY_MANUAL_EMAIL = "cognitainstituteofai@gmail.com";
+
 export const OFFICIAL_EMAILS = {
-  support: "support@thecognitainstitute.com",
-  admissions: "admissions@thecognitainstitute.com",
-  registrar: "registrar@thecognitainstitute.com",
-  privacy: "privacy@thecognitainstitute.com",
-  partnerships: "partnerships@thecognitainstitute.com",
+  support: TEMPORARY_MANUAL_EMAIL,
+  admissions: TEMPORARY_MANUAL_EMAIL,
+  registrar: TEMPORARY_MANUAL_EMAIL,
+  privacy: TEMPORARY_MANUAL_EMAIL,
+  partnerships: TEMPORARY_MANUAL_EMAIL,
 };
 
 export const POLICY_VERSIONS = {
