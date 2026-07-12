@@ -14,26 +14,30 @@ const CORE_TEAM = [
   {
     icon: BookOpenCheck,
     role: "Academic Affairs",
-    initials: "AA",
-    responsibility: "Curriculum, lesson standards, and academic coordination.",
-  },
-  {
-    icon: ClipboardList,
-    role: "Admissions and Registrar",
-    initials: "AR",
-    responsibility: "Applicant intake, learner records, and enrollment coordination.",
-  },
-  {
-    icon: Headphones,
-    role: "Learner Support",
-    initials: "LS",
-    responsibility: "Onboarding, account assistance, and learner concerns.",
+    image: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:c1a3db27-104b-4d95-968d-a523abc17ec7?size=1000",
+    imageAlt: "Cognita Institute Academic Affairs employee portrait",
+    responsibility: "Curriculum, lesson standards, facilitator coordination, and academic development.",
   },
   {
     icon: ShieldCheck,
     role: "Quality Assurance",
-    initials: "QA",
-    responsibility: "Assessment controls, portfolio review, and standards protection.",
+    image: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:a7cbe345-a676-46af-af44-308e77b98eb1?size=1000",
+    imageAlt: "Cognita Institute Quality Assurance employee portrait",
+    responsibility: "Assessment controls, portfolio review, policy compliance, and standards protection.",
+  },
+  {
+    icon: Headphones,
+    role: "Learner Support",
+    image: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:0828cb0f-b8dd-463b-be3a-e1246c479e73?size=1000",
+    imageAlt: "Cognita Institute Learner Support employee portrait",
+    responsibility: "Onboarding, account assistance, learning concerns, and learner service follow-through.",
+  },
+  {
+    icon: ClipboardList,
+    role: "Admissions and Registrar",
+    image: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:ca4ae3da-3af9-46d4-8f75-a568d0509f1f?size=1000",
+    imageAlt: "Cognita Institute Admissions and Registrar employee portrait",
+    responsibility: "Applicant intake, enrollment coordination, learner records, and completion documentation.",
   },
 ];
 
@@ -43,10 +47,10 @@ export default function FounderPreview() {
       <div className="mb-10 text-center">
         <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-cyan-400">Leadership and core operations</p>
         <h2 className="section-title text-2xl font-bold md:text-4xl">
-          THE FOUNDER IS NOT BUILDING COGNITA ALONE
+          THE FOUNDER IS SUPPORTED BY A CORE OPERATING TEAM
         </h2>
         <p className="mx-auto mt-4 max-w-3xl text-sm leading-7 text-slate-400 md:text-base">
-          Cognita is being structured around four essential operating functions. Individual names and official portraits will be published only after appointment, consent, and role verification.
+          Cognita is structured around academic quality, learner support, admissions, records, and institutional accountability. Employee names will be added when officially provided for publication.
         </p>
       </div>
 
@@ -80,18 +84,30 @@ export default function FounderPreview() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          {CORE_TEAM.map(({ icon: Icon, role, initials, responsibility }) => (
-            <article key={role} className="apple-card flex min-h-[15rem] flex-col p-6">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-sky-300/15 bg-sky-300/[0.07] text-lg font-semibold tracking-[-0.03em] text-sky-200">
-                  {initials}
+          {CORE_TEAM.map(({ icon: Icon, role, image, imageAlt, responsibility }) => (
+            <article key={role} className="apple-card overflow-hidden">
+              <div className="relative aspect-[4/3] overflow-hidden border-b border-white/[0.07] bg-[#07101f]">
+                <img
+                  src={image}
+                  alt={imageAlt}
+                  className="h-full w-full object-cover object-top"
+                  loading="lazy"
+                  decoding="async"
+                  referrerPolicy="no-referrer"
+                  onError={(event) => {
+                    event.currentTarget.style.display = "none";
+                  }}
+                />
+                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#07101f]/85 to-transparent" aria-hidden="true" />
+                <div className="absolute bottom-4 right-4 flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-[#050914]/70 text-sky-300 backdrop-blur-xl">
+                  <Icon size={19} />
                 </div>
-                <Icon size={22} className="text-sky-300/75" />
               </div>
-              <p className="mt-6 text-[10px] font-semibold uppercase tracking-[0.16em] text-sky-300/65">Core operating team</p>
-              <h3 className="mt-2 text-lg font-semibold tracking-[-0.02em] text-white">{role}</h3>
-              <p className="mt-3 text-sm leading-6 text-slate-400">{responsibility}</p>
-              <p className="mt-auto pt-5 text-[11px] leading-5 text-slate-500">Official employee name and portrait pending verification.</p>
+              <div className="p-5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-sky-300/65">Core operating team</p>
+                <h3 className="mt-2 text-lg font-semibold tracking-[-0.02em] text-white">{role}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-400">{responsibility}</p>
+              </div>
             </article>
           ))}
         </div>
