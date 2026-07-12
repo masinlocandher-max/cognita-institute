@@ -9,6 +9,7 @@ import {
   Headphones,
   Landmark,
   ShieldCheck,
+  UserRoundCheck,
 } from "lucide-react";
 
 const FOUNDER_IMAGE =
@@ -16,6 +17,33 @@ const FOUNDER_IMAGE =
 
 const ORGANIZATION_VISUAL =
   "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:7f7c4b19-b3b0-46af-bd17-35f1a47a0949?size=1800";
+
+const CORE_TEAM = [
+  {
+    icon: GraduationCap,
+    initials: "AA",
+    title: "Academic Affairs",
+    description: "Curriculum development, lesson quality, facilitator coordination, and academic standards.",
+  },
+  {
+    icon: BookOpenCheck,
+    initials: "AR",
+    title: "Admissions and Registrar",
+    description: "Applications, enrollment coordination, learner status, records, and completion documents.",
+  },
+  {
+    icon: Headphones,
+    initials: "LS",
+    title: "Learner Support",
+    description: "Student onboarding, account assistance, learning concerns, and service follow-through.",
+  },
+  {
+    icon: ShieldCheck,
+    initials: "QA",
+    title: "Quality Assurance",
+    description: "Human review controls, portfolio checks, credential protection, and policy compliance.",
+  },
+];
 
 const OFFICES = [
   {
@@ -72,7 +100,7 @@ export default function Organization() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 pb-20 sm:px-6 md:pb-28">
+      <section className="mx-auto max-w-7xl px-5 pb-12 sm:px-6 md:pb-16">
         <div className="apple-card overflow-hidden">
           <div className="grid lg:grid-cols-[0.78fr_1.22fr]">
             <div className="relative min-h-[28rem] overflow-hidden border-b border-white/[0.07] lg:border-b-0 lg:border-r">
@@ -97,10 +125,10 @@ export default function Organization() {
               </div>
               <p className="apple-eyebrow mt-7">Institutional leadership</p>
               <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-white md:text-5xl">
-                The founder remains publicly accountable for what Cognita promises.
+                The founder remains publicly accountable, supported by four core operating functions.
               </h2>
               <p className="mt-6 text-base leading-8 text-slate-400">
-                Cognita is being built as a private professional training institute with clear academic, operational, learner-support, assessment, and records functions. Public staff profiles are activated only after appointment, consent, and role verification.
+                Cognita is being built as a private professional training institute with clear academic, operational, learner-support, assessment, and records functions. Public employee names and portraits are activated only after appointment, consent, and role verification.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link to="/about" className="apple-button-secondary gap-2 px-6 py-3 text-sm font-medium">
@@ -117,12 +145,46 @@ export default function Organization() {
         </div>
       </section>
 
+      <section className="mx-auto max-w-7xl px-5 pb-20 sm:px-6 md:pb-28">
+        <div className="mb-9 flex max-w-3xl items-start gap-4">
+          <div className="apple-icon-tile flex-shrink-0">
+            <UserRoundCheck size={24} className="text-sky-300" />
+          </div>
+          <div>
+            <p className="apple-eyebrow">Core operating team</p>
+            <h2 className="mt-3 text-2xl font-semibold tracking-[-0.035em] text-white md:text-4xl">
+              Four employee profiles are reserved beside the founder.
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-slate-400 md:text-base">
+              These role-based profiles keep the organization visible without inventing employee identities. Official names and portraits can replace them after verification.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {CORE_TEAM.map(({ icon: Icon, initials, title, description }) => (
+            <article key={title} className="apple-card flex min-h-[18rem] flex-col p-6">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-sky-300/15 bg-sky-300/[0.07] text-xl font-semibold tracking-[-0.04em] text-sky-200">
+                  {initials}
+                </div>
+                <Icon size={23} className="text-sky-300/75" />
+              </div>
+              <p className="mt-7 text-[10px] font-semibold uppercase tracking-[0.17em] text-sky-300/65">Employee profile slot</p>
+              <h3 className="mt-2 text-lg font-semibold tracking-[-0.02em] text-white">{title}</h3>
+              <p className="mt-3 text-sm leading-6 text-slate-400">{description}</p>
+              <p className="mt-auto pt-5 text-[11px] leading-5 text-slate-500">Official name and portrait pending appointment verification.</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="border-y border-white/[0.065] bg-white/[0.012]">
         <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
           <div className="mb-10 max-w-3xl">
             <p className="apple-eyebrow">Cognita organization</p>
             <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-white md:text-5xl">
-              The approved organization visual is now part of the website.
+              The approved organization visual is part of the website.
             </h2>
             <p className="mt-5 text-base leading-7 text-slate-400">
               This visual presents the working organizational direction and portrait system. It is not used as proof of legal employment or appointment.
@@ -152,7 +214,7 @@ export default function Organization() {
             Every learner should know which office is responsible.
           </h2>
           <p className="mt-5 text-base leading-7 text-slate-400">
-            The website now presents Cognita through recognizable school functions rather than as a generic technology company.
+            The website presents Cognita through recognizable school functions rather than as a generic technology company.
           </p>
         </div>
 
