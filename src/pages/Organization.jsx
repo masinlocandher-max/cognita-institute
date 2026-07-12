@@ -21,27 +21,31 @@ const ORGANIZATION_VISUAL =
 const CORE_TEAM = [
   {
     icon: GraduationCap,
-    initials: "AA",
     title: "Academic Affairs",
+    image: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:c1a3db27-104b-4d95-968d-a523abc17ec7?size=1000",
+    imageAlt: "Cognita Institute Academic Affairs employee portrait",
     description: "Curriculum development, lesson quality, facilitator coordination, and academic standards.",
   },
   {
-    icon: BookOpenCheck,
-    initials: "AR",
-    title: "Admissions and Registrar",
-    description: "Applications, enrollment coordination, learner status, records, and completion documents.",
+    icon: ShieldCheck,
+    title: "Quality Assurance",
+    image: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:a7cbe345-a676-46af-af44-308e77b98eb1?size=1000",
+    imageAlt: "Cognita Institute Quality Assurance employee portrait",
+    description: "Human review controls, portfolio checks, credential protection, and policy compliance.",
   },
   {
     icon: Headphones,
-    initials: "LS",
     title: "Learner Support",
+    image: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:0828cb0f-b8dd-463b-be3a-e1246c479e73?size=1000",
+    imageAlt: "Cognita Institute Learner Support employee portrait",
     description: "Student onboarding, account assistance, learning concerns, and service follow-through.",
   },
   {
-    icon: ShieldCheck,
-    initials: "QA",
-    title: "Quality Assurance",
-    description: "Human review controls, portfolio checks, credential protection, and policy compliance.",
+    icon: BookOpenCheck,
+    title: "Admissions and Registrar",
+    image: "https://platform-cs-jpn3.adobe.io/rendition/id/urn:aaid:sc:AP:ca4ae3da-3af9-46d4-8f75-a568d0509f1f?size=1000",
+    imageAlt: "Cognita Institute Admissions and Registrar employee portrait",
+    description: "Applications, enrollment coordination, learner status, records, and completion documents.",
   },
 ];
 
@@ -128,7 +132,7 @@ export default function Organization() {
                 The founder remains publicly accountable, supported by four core operating functions.
               </h2>
               <p className="mt-6 text-base leading-8 text-slate-400">
-                Cognita is being built as a private professional training institute with clear academic, operational, learner-support, assessment, and records functions. Public employee names and portraits are activated only after appointment, consent, and role verification.
+                Cognita is being built as a private professional training institute with clear academic, learner-support, admissions, records, assessment, and quality-control responsibilities.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link to="/about" className="apple-button-secondary gap-2 px-6 py-3 text-sm font-medium">
@@ -153,27 +157,39 @@ export default function Organization() {
           <div>
             <p className="apple-eyebrow">Core operating team</p>
             <h2 className="mt-3 text-2xl font-semibold tracking-[-0.035em] text-white md:text-4xl">
-              Four employee profiles are reserved beside the founder.
+              Four key employee functions stand beside the founder.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-400 md:text-base">
-              These role-based profiles keep the organization visible without inventing employee identities. Official names and portraits can replace them after verification.
+              Official portraits are now assigned to Academic Affairs, Quality Assurance, Learner Support, and Admissions and Registrar. Employee names can be added once supplied for publication.
             </p>
           </div>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {CORE_TEAM.map(({ icon: Icon, initials, title, description }) => (
-            <article key={title} className="apple-card flex min-h-[18rem] flex-col p-6">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-sky-300/15 bg-sky-300/[0.07] text-xl font-semibold tracking-[-0.04em] text-sky-200">
-                  {initials}
+          {CORE_TEAM.map(({ icon: Icon, image, imageAlt, title, description }) => (
+            <article key={title} className="apple-card overflow-hidden">
+              <div className="relative aspect-[4/5] overflow-hidden border-b border-white/[0.07] bg-[#07101f]">
+                <img
+                  src={image}
+                  alt={imageAlt}
+                  className="h-full w-full object-cover object-top"
+                  loading="lazy"
+                  decoding="async"
+                  referrerPolicy="no-referrer"
+                  onError={(event) => {
+                    event.currentTarget.style.display = "none";
+                  }}
+                />
+                <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#07101f]/90 to-transparent" aria-hidden="true" />
+                <div className="absolute bottom-4 right-4 flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-[#050914]/70 text-sky-300 backdrop-blur-xl">
+                  <Icon size={20} />
                 </div>
-                <Icon size={23} className="text-sky-300/75" />
               </div>
-              <p className="mt-7 text-[10px] font-semibold uppercase tracking-[0.17em] text-sky-300/65">Employee profile slot</p>
-              <h3 className="mt-2 text-lg font-semibold tracking-[-0.02em] text-white">{title}</h3>
-              <p className="mt-3 text-sm leading-6 text-slate-400">{description}</p>
-              <p className="mt-auto pt-5 text-[11px] leading-5 text-slate-500">Official name and portrait pending appointment verification.</p>
+              <div className="p-6">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.17em] text-sky-300/65">Core operating team</p>
+                <h3 className="mt-2 text-lg font-semibold tracking-[-0.02em] text-white">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-400">{description}</p>
+              </div>
             </article>
           ))}
         </div>
