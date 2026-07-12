@@ -13,6 +13,7 @@ import BrandLockup from "@/components/BrandLockup";
 import CognitaIntroTransition from "@/components/CognitaIntroTransition";
 import FounderPreview from "@/components/FounderPreview";
 import ProgramPortfolio from "@/components/ProgramPortfolio";
+import SchoolExperienceSection from "@/components/SchoolExperienceSection";
 import { EDITORIAL_ASSETS, FLAGSHIP_PROGRAM } from "@/lib/program-portfolio";
 
 const STATS = [
@@ -67,13 +68,13 @@ export default function Home() {
         <div className="relative mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
           <div>
             <BrandLockup size="md" className="mb-10 items-start" />
-            <p className="apple-eyebrow">Private professional AI training institute</p>
+            <p className="apple-eyebrow">Private professional AI school</p>
             <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] text-white sm:text-5xl md:text-7xl">
               Professional AI learning.
               <span className="block text-sky-300">Designed around proof.</span>
             </h1>
             <p className="mt-7 max-w-2xl text-base leading-7 text-slate-300/75 md:text-xl md:leading-8">
-              Cognita combines flexible learning, guided professional programs, evidence-based assessment, and institutional training within one credible education system.
+              Enter one connected school experience for programs, admissions, lessons, learner support, assessment, and official records.
             </p>
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -88,7 +89,7 @@ export default function Home() {
                 to="/apply"
                 className="apple-button-secondary gap-2 px-7 py-3.5 text-sm font-medium"
               >
-                Apply to the 10-week program
+                Visit Admissions
                 <ChevronRight size={16} />
               </Link>
             </div>
@@ -153,6 +154,8 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      <SchoolExperienceSection />
 
       <section className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
         <div className="mx-auto mb-12 max-w-3xl text-center md:mb-16">
@@ -226,15 +229,15 @@ export default function Home() {
 
       <section className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
         <div className="apple-card p-8 text-center md:p-16">
-          <p className="apple-eyebrow">Cognita Professional Programs</p>
+          <p className="apple-eyebrow">Cognita Admissions</p>
           <h2 className="mx-auto mt-4 max-w-3xl text-3xl font-semibold tracking-[-0.045em] text-white md:text-5xl">
-            Ready for guided, standards-based AI training?
+            Prepare for the next verified learning pathway.
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400">
-            Applications to the 10-Week Professional AI Program are reviewed individually before enrollment.
+            Cognita is collecting early-access and guided-program interest while final learner operations are being verified.
           </p>
           <Link to="/apply" className="apple-button-primary mt-8 gap-2 px-7 py-3.5 text-sm font-semibold">
-            Apply to the next cohort
+            Join the admissions waitlist
             <ArrowRight size={16} />
           </Link>
         </div>

@@ -14,6 +14,7 @@ const AppRouter = import.meta.env.VITE_DEPLOY_TARGET === 'github-pages' ? HashRo
 const PublicLayout = lazy(() => import('@/components/public/PublicLayout'));
 const Home = lazy(() => import('@/pages/Home'));
 const About = lazy(() => import('@/pages/About'));
+const Organization = lazy(() => import('@/pages/Organization'));
 const Program = lazy(() => import('@/pages/Program'));
 const Tracks = lazy(() => import('@/pages/Tracks'));
 const Faq = lazy(() => import('@/pages/Faq'));
@@ -101,6 +102,7 @@ const AuthenticatedApp = () => {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/organization" element={<Organization />} />
           <Route path="/program" element={<Program />} />
           <Route path="/tracks" element={<Tracks />} />
           <Route path="/faq" element={<Faq />} />
