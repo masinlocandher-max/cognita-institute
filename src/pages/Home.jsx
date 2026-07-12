@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
-  Check,
-  ChevronRight,
+  Clock3,
   FileCheck2,
   Layers3,
+  Mail,
   ShieldCheck,
   UsersRound,
 } from "lucide-react";
 import BrandLockup from "@/components/BrandLockup";
-import CognitaIntroTransition from "@/components/CognitaIntroTransition";
 import FounderPreview from "@/components/FounderPreview";
 import ProgramPortfolio from "@/components/ProgramPortfolio";
 import SchoolExperienceSection from "@/components/SchoolExperienceSection";
-import { EDITORIAL_ASSETS, FLAGSHIP_PROGRAM } from "@/lib/program-portfolio";
+import { FLAGSHIP_PROGRAM } from "@/lib/program-portfolio";
+
+const WAITLIST_EMAIL = "cognitainstituteofai@gmail.com";
 
 const STATS = [
   { value: "4", label: "Professional learning pathways" },
@@ -47,98 +48,131 @@ const STANDARDS = [
 ];
 
 export default function Home() {
-  const [showIntro, setShowIntro] = useState(() => {
-    return typeof window !== "undefined" && !sessionStorage.getItem("cognita_intro_seen");
-  });
-
-  useEffect(() => {
-    if (showIntro) {
-      sessionStorage.setItem("cognita_intro_seen", "true");
-    }
-  }, [showIntro]);
-
-  if (showIntro) {
-    return <CognitaIntroTransition onComplete={() => setShowIntro(false)} />;
-  }
-
   return (
     <div className="apple-surface">
-      <section className="relative overflow-hidden px-5 pb-20 pt-24 sm:px-6 md:pb-28 md:pt-32">
-        <div className="absolute left-1/2 top-0 h-[34rem] w-[58rem] -translate-x-1/2 rounded-full bg-sky-400/[0.07] blur-[130px]" />
+      <section className="relative overflow-hidden px-5 pb-20 pt-16 sm:px-6 md:pb-28 md:pt-24">
+        <div className="absolute left-1/2 top-0 h-[34rem] w-[58rem] -translate-x-1/2 rounded-full bg-sky-400/[0.08] blur-[130px]" />
+
         <div className="relative mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
           <div>
-            <BrandLockup size="md" className="mb-10 items-start" />
-            <p className="apple-eyebrow">Private professional AI school</p>
-            <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] text-white sm:text-5xl md:text-7xl">
-              Professional AI learning.
-              <span className="block text-sky-300">Designed around proof.</span>
-            </h1>
-            <p className="mt-7 max-w-2xl text-base leading-7 text-slate-300/75 md:text-xl md:leading-8">
-              Enter one connected school experience for programs, admissions, lessons, learner support, assessment, and official records.
-            </p>
+            <BrandLockup size="md" className="mb-9 items-start" />
 
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Link
-                to="/program"
-                className="apple-button-primary gap-2 px-7 py-3.5 text-sm font-semibold"
-              >
-                Explore Cognita programs
-                <ArrowRight size={16} />
-              </Link>
-              <Link
-                to="/apply"
-                className="apple-button-secondary gap-2 px-7 py-3.5 text-sm font-medium"
-              >
-                Visit Admissions
-                <ChevronRight size={16} />
-              </Link>
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-200/15 bg-amber-200/[0.055] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-100/85">
+              <Clock3 size={14} />
+              Temporary launch announcement
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-xs text-slate-400">
-              {["Non-degree professional training", "Output-based learning", "Verified completion"].map((item) => (
-                <span key={item} className="flex items-center gap-2">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-sky-400/10 text-sky-300">
-                    <Check size={11} />
-                  </span>
-                  {item}
-                </span>
-              ))}
+            <h1 className="mt-6 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] text-white sm:text-5xl md:text-7xl">
+              Cognita Institute is currently
+              <span className="block text-sky-300">under maintenance.</span>
+            </h1>
+
+            <p className="mt-7 max-w-2xl text-base leading-7 text-slate-300/75 md:text-xl md:leading-8">
+              We are refining the learning platform, admissions process, student portal, support systems, and public information before the next phase of access opens.
+            </p>
+
+            <div className="mt-8 rounded-2xl border border-white/[0.075] bg-white/[0.025] p-5">
+              <p className="text-sm leading-7 text-slate-300/85">
+                No automatic enrollment or payment is being processed while maintenance is ongoing. Join the waitlist to receive verified launch updates and early-access notices.
+              </p>
+            </div>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <a href="#waitlist" className="apple-button-primary gap-2 px-7 py-3.5 text-sm font-semibold">
+                Join the waitlist
+                <ArrowRight size={16} />
+              </a>
+              <a
+                href={`mailto:${WAITLIST_EMAIL}?subject=Cognita%20Institute%20Inquiry`}
+                className="apple-button-secondary gap-2 px-7 py-3.5 text-sm font-medium"
+              >
+                Email Cognita
+                <Mail size={16} />
+              </a>
             </div>
           </div>
 
-          <div className="relative min-h-[28rem] overflow-hidden rounded-[2.4rem] border border-white/10 bg-slate-950 shadow-[0_48px_120px_rgba(0,0,0,0.42)] md:min-h-[34rem]">
-            <img
-              src={EDITORIAL_ASSETS.hero}
-              alt="Professional learner using a silver MacBook in a premium Cognita learning environment."
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              referrerPolicy="no-referrer"
-              className="absolute inset-0 h-full w-full object-cover"
-              onError={(event) => {
-                event.currentTarget.style.display = "none";
-              }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#050914]/35 via-transparent to-black/10" aria-hidden="true" />
-            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#050914] via-[#050914]/45 to-transparent" aria-hidden="true" />
+          <div id="waitlist" className="apple-card scroll-mt-32 p-6 md:p-8 lg:p-9">
+            <p className="apple-eyebrow">Temporary manual intake</p>
+            <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-white md:text-4xl">
+              Be notified when Cognita is ready.
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-slate-400 md:text-base">
+              Leave your details below. Your waitlist submission will be delivered directly to the official Cognita Institute email for manual review.
+            </p>
 
-            <div className="absolute left-6 top-6 rounded-full border border-white/15 bg-[#050914]/66 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.17em] text-sky-100/80 backdrop-blur-xl md:left-8 md:top-8">
-              Cognita learning environment
-            </div>
+            <form
+              action={`https://formsubmit.co/${WAITLIST_EMAIL}`}
+              method="POST"
+              className="mt-7 space-y-5"
+            >
+              <input type="hidden" name="_subject" value="New Cognita Institute Waitlist Submission" />
+              <input type="hidden" name="_template" value="table" />
+              <input type="hidden" name="_captcha" value="false" />
+              <input type="hidden" name="source" value="Cognita landing page maintenance announcement" />
 
-            <div className="absolute inset-x-5 bottom-5 rounded-[1.5rem] border border-white/12 bg-[#07101f]/82 p-5 shadow-2xl backdrop-blur-2xl md:inset-x-7 md:bottom-7 md:p-6">
-              <div className="flex items-start gap-4">
-                <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl border border-sky-300/15 bg-sky-300/[0.08] text-sky-300">
-                  <ShieldCheck size={21} />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-sky-300/70">Flagship guided pathway</p>
-                  <h2 className="mt-2 text-lg font-semibold tracking-[-0.025em] text-white md:text-xl">{FLAGSHIP_PROGRAM.name}</h2>
-                  <p className="mt-2 text-xs leading-5 text-slate-400 md:text-sm">
-                    Structured cohort learning, facilitator review, portfolio development, and completion verification.
-                  </p>
-                </div>
+              <div>
+                <label htmlFor="waitlist-name" className="mb-2 block text-xs font-medium text-slate-400">
+                  Full name
+                </label>
+                <input
+                  id="waitlist-name"
+                  name="full_name"
+                  type="text"
+                  autoComplete="name"
+                  required
+                  placeholder="Your full name"
+                  className="h-12 w-full rounded-xl border border-white/10 bg-white/[0.035] px-4 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-sky-300/45 focus:ring-2 focus:ring-sky-300/10"
+                />
               </div>
+
+              <div>
+                <label htmlFor="waitlist-email" className="mb-2 block text-xs font-medium text-slate-400">
+                  Email address
+                </label>
+                <input
+                  id="waitlist-email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  placeholder="you@example.com"
+                  className="h-12 w-full rounded-xl border border-white/10 bg-white/[0.035] px-4 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-sky-300/45 focus:ring-2 focus:ring-sky-300/10"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="waitlist-interest" className="mb-2 block text-xs font-medium text-slate-400">
+                  Primary interest
+                </label>
+                <select
+                  id="waitlist-interest"
+                  name="primary_interest"
+                  required
+                  defaultValue=""
+                  className="h-12 w-full rounded-xl border border-white/10 bg-[#0a1324] px-4 text-sm text-white outline-none transition focus:border-sky-300/45 focus:ring-2 focus:ring-sky-300/10"
+                >
+                  <option value="" disabled>
+                    Select your interest
+                  </option>
+                  <option value="Student or learner">Student or learner</option>
+                  <option value="Working professional">Working professional</option>
+                  <option value="School or organization">School or organization</option>
+                  <option value="Teaching or facilitation">Teaching or facilitation</option>
+                  <option value="General updates">General updates</option>
+                </select>
+              </div>
+
+              <button type="submit" className="apple-button-primary h-12 w-full px-6 text-sm font-semibold">
+                Submit to the Cognita waitlist
+              </button>
+            </form>
+
+            <div className="mt-5 flex items-start gap-3 rounded-2xl border border-sky-300/10 bg-sky-300/[0.035] p-4">
+              <ShieldCheck size={18} className="mt-0.5 flex-shrink-0 text-sky-300" />
+              <p className="text-xs leading-6 text-slate-400">
+                Temporary contact: {WAITLIST_EMAIL}. Joining the waitlist is not an enrollment offer and does not require payment.
+              </p>
             </div>
           </div>
         </div>
@@ -236,10 +270,10 @@ export default function Home() {
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400">
             Cognita is collecting early-access and guided-program interest while final learner operations are being verified.
           </p>
-          <Link to="/apply" className="apple-button-primary mt-8 gap-2 px-7 py-3.5 text-sm font-semibold">
+          <a href="#waitlist" className="apple-button-primary mt-8 gap-2 px-7 py-3.5 text-sm font-semibold">
             Join the admissions waitlist
             <ArrowRight size={16} />
-          </Link>
+          </a>
         </div>
       </section>
     </div>
