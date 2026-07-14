@@ -1,6 +1,6 @@
 export const OFFICIAL_DOMAIN = "https://thecognitainstitute.com";
 
-export const TEMPORARY_MANUAL_EMAIL = "cognitainstituteofai@gmail.com";
+export const TEMPORARY_MANUAL_EMAIL = "info@thecognitainstitute.com";
 
 export const OFFICIAL_EMAILS = {
   support: TEMPORARY_MANUAL_EMAIL,
