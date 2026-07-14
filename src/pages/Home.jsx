@@ -13,9 +13,10 @@ import BrandLockup from "@/components/BrandLockup";
 import FounderPreview from "@/components/FounderPreview";
 import ProgramPortfolio from "@/components/ProgramPortfolio";
 import SchoolExperienceSection from "@/components/SchoolExperienceSection";
+import { OFFICIAL_EMAILS } from "@/lib/governance";
 import { EDITORIAL_ASSETS, FLAGSHIP_PROGRAM } from "@/lib/program-portfolio";
 
-const WAITLIST_EMAIL = "cognitainstituteofai@gmail.com";
+const WAITLIST_EMAIL = OFFICIAL_EMAILS.admissions;
 
 const STATS = [
   { value: "4", label: "Professional learning pathways" },
@@ -135,7 +136,7 @@ export default function Home() {
               <div className="mt-5 flex items-start gap-3 rounded-2xl border border-sky-300/10 bg-sky-300/[0.035] p-4">
                 <ShieldCheck size={18} className="mt-0.5 flex-shrink-0 text-sky-300" />
                 <p className="text-xs leading-6 text-slate-400">
-                  Temporary contact: {WAITLIST_EMAIL}. Joining the waitlist is not an enrollment offer and does not require payment.
+                  Official contact: {WAITLIST_EMAIL}. Joining the waitlist is not an enrollment offer and does not require payment.
                 </p>
               </div>
             </div>
