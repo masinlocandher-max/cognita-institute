@@ -1,14 +1,25 @@
 # Cognita Institute
 
+> **Repository status: Legacy mirror**
+>
+> The active Cognita source is now maintained in `masinlocandher-max/Withlovefmb` under `apps/cognita`.
+>
+> Do not make new production changes in this standalone repository. Keep it as a temporary historical backup until the monorepo deployment and full file-parity checks are complete. Never commit environment files, API secrets, database credentials, private learner records, or conversation data here.
+
 Cognita is a Base44-built React/Vite application for AI education, applications, enrollment, lessons, quizzes, submissions, certificates, messaging, payments, and role-based dashboards.
 
-## Repository status
+## Repository status and history
 
-This repository was created from a manual Base44 ZIP export.
+This repository was created from a manual Base44 ZIP export. It now serves only as a legacy backup and historical record.
 
-GitHub is currently the editable source and backup for Cognita. Automatic two-way synchronization with the Base44 Builder has not been verified, so a GitHub change must not be assumed to appear in Base44 or on the live app automatically.
+The governed source of truth is:
 
-The cleaned source is being reviewed through a pull request before it is merged into `main`.
+```text
+masinlocandher-max/Withlovefmb
+└── apps/cognita
+```
+
+Automatic two-way synchronization with the Base44 Builder has not been verified, so a GitHub change must not be assumed to appear in Base44 or on the live application automatically.
 
 ## Main project areas
 
@@ -18,7 +29,7 @@ The cleaned source is being reviewed through a pull request before it is merged 
 - `base44/entities/`: Base44 entity schemas
 - `base44/workflows/`: lifecycle email workflows
 - `base44/functions/`: Base44 server functions
-- `AUDIT.md`: current technical status, resolved issues, and remaining risks
+- `AUDIT.md`: technical status, resolved issues, and remaining risks
 
 ## Local setup
 
