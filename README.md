@@ -2,7 +2,7 @@
 
 > **Repository status: Legacy mirror**
 >
-> The active Cognita source is now maintained in `masinlocandher-max/Withlovefmb` under `apps/cognita`.
+> The active Cognita source is now maintained in `masinlocandher-max/FMB-Ecosystem` under `apps/cognita`.
 >
 > Do not make new production changes in this standalone repository. Keep it as a temporary historical backup until the monorepo deployment and full file-parity checks are complete. Never commit environment files, API secrets, database credentials, private learner records, or conversation data here.
 
@@ -15,7 +15,7 @@ This repository was created from a manual Base44 ZIP export. It now serves only 
 The governed source of truth is:
 
 ```text
-masinlocandher-max/Withlovefmb
+masinlocandher-max/FMB-Ecosystem
 └── apps/cognita
 ```
 
